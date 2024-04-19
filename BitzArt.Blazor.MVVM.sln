@@ -3,9 +3,73 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C54FB269-D270-47ED-AD51-22AB38022393}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{DD5C363C-98C8-4CE3-B67B-07B77808E0F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3A0C878D-B34D-4651-BDC4-C016B10C6384}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\docs.yml = .github\workflows\docs.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+		.github\workflows\tests.yml = .github\workflows\tests.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3C06E27B-FFF5-49A3-91C8-FE5856BF5560}"
+	ProjectSection(SolutionItems) = preProject
+		docs\book.toml = docs\book.toml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6EE1DDAF-17BC-42D9-9CDA-6144F99DD4F9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\src\01.introduction.md = docs\src\01.introduction.md
+		docs\src\SUMMARY.md = docs\src\SUMMARY.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B22B408D-EEB8-4933-AED6-C5A225C50AFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM", "src\BitzArt.Blazor.MVVM\BitzArt.Blazor.MVVM.csproj", "{1069F2AF-7A9C-47F2-91C2-E970295FEF38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.Tests", "tests\BitzArt.Blazor.MVVM.Tests\BitzArt.Blazor.MVVM.Tests.csproj", "{EDDA4260-98DF-42BD-A268-1FCE434916D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{5123F2D4-DA61-4184-A05D-3573882BCAB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.SampleApp", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.csproj", "{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.SampleApp.Client", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.Client\BitzArt.Blazor.MVVM.SampleApp.Client.csproj", "{9FD22113-A902-4D92-8060-45F6E1CBC114}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1069F2AF-7A9C-47F2-91C2-E970295FEF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1069F2AF-7A9C-47F2-91C2-E970295FEF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1069F2AF-7A9C-47F2-91C2-E970295FEF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1069F2AF-7A9C-47F2-91C2-E970295FEF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDDA4260-98DF-42BD-A268-1FCE434916D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDDA4260-98DF-42BD-A268-1FCE434916D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDDA4260-98DF-42BD-A268-1FCE434916D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDDA4260-98DF-42BD-A268-1FCE434916D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FD22113-A902-4D92-8060-45F6E1CBC114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FD22113-A902-4D92-8060-45F6E1CBC114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FD22113-A902-4D92-8060-45F6E1CBC114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FD22113-A902-4D92-8060-45F6E1CBC114}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A0C878D-B34D-4651-BDC4-C016B10C6384} = {DD5C363C-98C8-4CE3-B67B-07B77808E0F8}
+		{6EE1DDAF-17BC-42D9-9CDA-6144F99DD4F9} = {3C06E27B-FFF5-49A3-91C8-FE5856BF5560}
+		{1069F2AF-7A9C-47F2-91C2-E970295FEF38} = {C54FB269-D270-47ED-AD51-22AB38022393}
+		{EDDA4260-98DF-42BD-A268-1FCE434916D0} = {B22B408D-EEB8-4933-AED6-C5A225C50AFD}
+		{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90} = {5123F2D4-DA61-4184-A05D-3573882BCAB9}
+		{9FD22113-A902-4D92-8060-45F6E1CBC114} = {5123F2D4-DA61-4184-A05D-3573882BCAB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4FA14A9-7D90-4164-B34A-94477B44DB17}
