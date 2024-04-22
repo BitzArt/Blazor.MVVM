@@ -17,7 +17,15 @@ public abstract class PageViewModel
         return Task.CompletedTask;
     }
 
-    internal abstract Task PersistStateAsync();
+    internal virtual Task PersistStateAsync() => Task.CompletedTask;
+
+    /// <summary>
+    /// Notifies the component that the state has changed.
+    /// </summary>
+    protected void StateHasChanged()
+    {
+        Component.StateHasChanged();
+    }
 }
 
 /// <summary>
@@ -80,13 +88,5 @@ public abstract class PageViewModel<TState> : PageViewModel
         Component.ComponentState!.PersistAsJson(StateKey, _state);
 
         return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Notifies the component that the state has changed.
-    /// </summary>
-    protected void StateHasChanged()
-    {
-        Component.StateHasChanged();
     }
 }
