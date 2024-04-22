@@ -21,6 +21,8 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     [Inject]
     protected TViewModel ViewModel { get; set; } = null!;
 
+    PersistentComponentState IPersistentComponent.ComponentState => throw new NotImplementedException();
+
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
     /// parameters from its parent in the render tree. Override this method if you will
@@ -39,5 +41,10 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     private async Task PersistStateAsync()
     {
         await ViewModel.PersistStateAsync();
+    }
+
+    void IPersistentComponent.StateHasChanged()
+    {
+        StateHasChanged();
     }
 }

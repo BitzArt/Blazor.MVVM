@@ -81,4 +81,12 @@ public abstract class PageViewModel<TState> : PageViewModel
 
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Notifies the component that the state has changed.
+    /// </summary>
+    protected void StateHasChanged()
+    {
+        Component.StateHasChanged();
+    }
 }
