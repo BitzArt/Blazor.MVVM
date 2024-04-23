@@ -3,7 +3,7 @@
 namespace BitzArt.Blazor.MVVM;
 
 /// <summary>
-/// Blazor component base class with view model support.
+/// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
 public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
@@ -20,6 +20,12 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     /// </summary>
     [Inject]
     protected TViewModel ViewModel { get; set; } = null!;
+
+    /// <summary>
+    /// Navigation manager.
+    /// </summary>
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
 
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
@@ -44,5 +50,15 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     void IPersistentComponent.StateHasChanged()
     {
         StateHasChanged();
+    }
+
+    /// <summary>
+    /// Set the parameters from the query string.
+    /// </summary>
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        ViewModel.SetParametersFromQueryString(NavigationManager);
+
+        return base.SetParametersAsync(parameters);
     }
 }
