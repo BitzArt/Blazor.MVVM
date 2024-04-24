@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
-using System.Globalization;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace BitzArt.Blazor.MVVM;
@@ -35,9 +35,9 @@ internal static class QueryStringParameterExtensions
         }
     }
 
-    private static object ConvertValue(StringValues value, Type type)
+    private static object? ConvertValue(StringValues value, Type type)
     {
-        return Convert.ChangeType(value[0], type, CultureInfo.InvariantCulture)!;
+        return TypeDescriptor.GetConverter(type).ConvertFromString(value[0]!);
     }
 
     private static PropertyInfo[] GetProperties<T>()
