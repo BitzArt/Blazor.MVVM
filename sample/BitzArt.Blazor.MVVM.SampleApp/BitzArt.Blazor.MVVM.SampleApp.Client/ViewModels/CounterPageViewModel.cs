@@ -1,11 +1,12 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-public class CounterPageViewModel : PageViewModel<CounterPageViewModelState>
+public class CounterPageViewModel : ComponentViewModel<CounterPageViewModelState>
 {
-    protected override void InitializeState()
+    protected override void Initialize()
     {
         State.Count = 0;
-        State.Text = "Initialized";
+
+        State.Text = "ViewModel State initialized on: " + (OperatingSystem.IsBrowser() ? "Client" : "Server");
     }
 
     public void IncrementCount()
@@ -18,5 +19,5 @@ public class CounterPageViewModelState
 {
     public int? Count { get; set; }
 
-    public string? Text { get; set; } = "NotInitialized";
+    public string? Text { get; set; } = "State not initialized";
 }

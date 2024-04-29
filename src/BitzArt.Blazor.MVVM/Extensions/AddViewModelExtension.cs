@@ -43,7 +43,7 @@ public static class AddViewModelExtension
             .GetTypes()
             .Where(t => t.IsPublic)
             .Where(t => !t.IsAbstract)
-            .Where(t => t.IsSubclassOf(typeof(PageViewModel)));
+            .Where(t => t.IsSubclassOf(typeof(ComponentViewModel)));
 
         foreach (var viewModelType in viewModelTypes) services.AddTransient(viewModelType);
 
@@ -63,7 +63,7 @@ public static class AddViewModelExtension
     /// Adds a view model to the service collection.
     /// </summary>
     public static IServiceCollection AddBlazorViewModel<TViewModel>(this IServiceCollection services)
-        where TViewModel : PageViewModel
+        where TViewModel : ComponentViewModel
     {
         services.AddTransient<TViewModel>();
         return services;
