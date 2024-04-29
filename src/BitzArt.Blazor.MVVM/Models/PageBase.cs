@@ -103,23 +103,6 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     }
 }
 
-file static class GenericTypeExtensions
-{
-    public static bool IsSubclassOfRawGeneric(this Type? toCheck, Type generic)
-    {
-        while (toCheck is not null && toCheck != typeof(object))
-        {
-            var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-            if (generic == cur)
-            {
-                return true;
-            }
-            toCheck = toCheck.BaseType;
-        }
-        return false;
-    }
-}
-
 internal static class PersistentStateJsonSerializerOptionsProvider
 {
     public static readonly JsonSerializerOptions Options = new()
