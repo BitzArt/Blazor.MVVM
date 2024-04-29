@@ -82,8 +82,9 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
         else
         {
             statefulViewModel.ComponentState = Activator.CreateInstance(statefulViewModel.StateType)!;
-            ViewModel.InitializeInternal();
-            await ViewModel.InitializeAsyncInternal();
+            
+            statefulViewModel.InitializeState();
+            await statefulViewModel.InitializeStateAsync();
         }
     }
 

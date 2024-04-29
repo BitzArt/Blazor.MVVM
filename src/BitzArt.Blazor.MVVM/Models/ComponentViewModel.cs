@@ -7,23 +7,6 @@ public abstract class ComponentViewModel
 {
     internal IPersistentComponent Component { get; set; } = null!;
 
-    internal Task InitializeAsyncInternal() => InitializeAsync();
-
-    /// <summary>
-    /// Initializes this view model.
-    /// </summary>
-    protected virtual Task InitializeAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    internal void InitializeInternal() => Initialize();
-
-    /// <summary>
-    /// Initializes this view model.
-    /// </summary>
-    protected virtual void Initialize() { }
-
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
@@ -58,4 +41,17 @@ public abstract class ComponentViewModel<TState> : ComponentViewModel, IStateful
     /// Type of this view model's state.
     /// </summary>
     public Type StateType => typeof(TState);
+
+    /// <summary>
+    /// Initializes this view model.
+    /// </summary>
+    public virtual void InitializeState() { }
+
+    /// <summary>
+    /// Initializes this view model.
+    /// </summary>
+    public virtual Task InitializeStateAsync()
+    {
+        return Task.CompletedTask;
+    }
 }
