@@ -7,10 +7,10 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
+public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent, IDisposable
     where TViewModel : ComponentViewModel
 {
-    private const string StateKey = "_state";
+    private const string StateKey = "state";
 
     /// <summary>
     /// This component's persistent state.
@@ -30,6 +30,8 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
 
+    private PersistingComponentStateSubscription persistingSubscription;
+
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
     /// parameters from its parent in the render tree. Override this method if you will
@@ -41,7 +43,7 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     {
         await base.OnInitializedAsync();
         ViewModel.Component = this;
-        ComponentState!.RegisterOnPersisting(PersistState);
+        persistingSubscription = ComponentState!.RegisterOnPersisting(PersistState);
 
         await RestoreStateAsync();
     }
@@ -102,6 +104,11 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
 
         return base.SetParametersAsync(parameters);
     }
+
+    /// <summary>
+    /// Disposes of the page.
+    /// </summary>
+    public void Dispose() => persistingSubscription.Dispose();
 }
 
 internal static class PersistentStateJsonSerializerOptionsProvider
