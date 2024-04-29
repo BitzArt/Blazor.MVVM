@@ -1,12 +1,14 @@
 ﻿@page "/counter"
-@rendermode InteractiveAuto
+@rendermode @(new InteractiveAutoRenderMode(prerender: true))
 @inherits PageBase<CounterPageViewModel>
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
 
-<h2>@(OperatingSystem.IsBrowser() ? "WASM" : "Server")</h2>
+<p>This page is currently being rendered using: @(OperatingSystem.IsBrowser() ? "WASM" : "Server")</p>
+
+<p>@ViewModel.State.Text</p>
 
 <p role="status">Current count: @ViewModel.State.Count</p>
 
