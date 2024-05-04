@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
+using System.Text;
 using System.Text.Json;
 
 namespace BitzArt.Blazor.MVVM;
@@ -7,16 +10,10 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent, IDisposable
+public abstract partial class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     where TViewModel : ComponentViewModel
 {
     private const string StateKey = "state";
-
-    /// <summary>
-    /// This component's persistent state.
-    /// </summary>
-    [Inject]
-    public PersistentComponentState ComponentState { get; private set; } = null!;
 
     /// <summary>
     /// This page's ViewModel.
@@ -24,13 +21,23 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     [Inject]
     protected TViewModel ViewModel { get; set; } = null!;
 
+    [Inject]
+    private IJSRuntime Js { get; set; } = default!;
+
+    [Inject]
+    private RenderingEnvironment RenderingEnvironment { get; set; } = null!;
+
     /// <summary>
     /// Navigation manager.
     /// </summary>
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
 
-    private PersistingComponentStateSubscription persistingSubscription;
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        var state = SerializeState();
+        if (state is not null) builder.AddMarkupContent(1, state);
+    }
 
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
@@ -43,43 +50,55 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
     {
         await base.OnInitializedAsync();
         ViewModel.Component = this;
-        persistingSubscription = ComponentState!.RegisterOnPersisting(PersistState);
 
         await RestoreStateAsync();
     }
 
-    private Task PersistState()
+    private string? SerializeState()
     {
-        PersistComponentState(ViewModel, StateKey, strict: false);
-
-        return Task.CompletedTask;
+        return SerializeComponentState(ViewModel, StateKey, strict: false);
     }
 
-    private void PersistComponentState(ComponentViewModel viewModel, string key, bool strict = true)
+    private string? SerializeComponentState(ComponentViewModel viewModel, string key, bool strict = true)
     {
         if (ViewModel is not IStatefulViewModel statefulViewModel)
         {
             if (strict) throw new InvalidOperationException($"ViewModel '{viewModel.GetType().Name}' must implement IStatefulViewModel");
-            return;
+            return null;
         }
 
-        ComponentState.PersistAsJson(StateKey, statefulViewModel.ComponentState);
+        return Serialize(statefulViewModel.ComponentState, key);
+    }
+
+    private static string? Serialize(object state, string key)
+    {
+        if (state is null || OperatingSystem.IsBrowser())
+            return null;
+
+        var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
+        var base64 = Convert.ToBase64String(json);
+        return $"<script id=\"{key}\" type=\"text/template\">{base64}</script>";
     }
 
     private async Task RestoreStateAsync()
     {
-        await RestoreComponentStateAsync(ViewModel, StateKey);
+        var isPrerender = RenderingEnvironment.IsPrerender;
+        var state = isPrerender
+            ? null
+            : await Js.InvokeAsync<string?>("getInnerText", [StateKey]);
+
+        await RestoreComponentStateAsync(ViewModel, state);
     }
 
-    private async Task RestoreComponentStateAsync(ComponentViewModel viewModel, string key)
+    private async Task RestoreComponentStateAsync(ComponentViewModel viewModel, string? state)
     {
         if (viewModel is not IStatefulViewModel statefulViewModel) return;
 
-        var stateExists = ComponentState.TryTakeFromJson<JsonElement>(key, out var state);
-
-        if (stateExists)
+        if (state is not null)
         {
-            statefulViewModel.ComponentState = JsonSerializer.Deserialize(state, statefulViewModel.StateType, PersistentStateJsonSerializerOptionsProvider.Options)!;
+            var buffer = Convert.FromBase64String(state);
+            var json = Encoding.UTF8.GetString(buffer);
+            statefulViewModel.ComponentState = JsonSerializer.Deserialize(json, statefulViewModel.StateType, StateJsonOptionsProvider.Options)!;
         }
         else
         {
@@ -104,14 +123,9 @@ public abstract class PageBase<TViewModel> : ComponentBase, IPersistentComponent
 
         return base.SetParametersAsync(parameters);
     }
-
-    /// <summary>
-    /// Disposes of the page.
-    /// </summary>
-    public void Dispose() => persistingSubscription.Dispose();
 }
 
-internal static class PersistentStateJsonSerializerOptionsProvider
+internal static class StateJsonOptionsProvider
 {
     public static readonly JsonSerializerOptions Options = new()
     {

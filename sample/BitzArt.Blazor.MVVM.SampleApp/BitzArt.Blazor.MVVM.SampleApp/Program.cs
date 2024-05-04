@@ -1,4 +1,3 @@
-using BitzArt.Blazor.MVVM.SampleApp.Client.Pages;
 using BitzArt.Blazor.MVVM.SampleApp.Components;
 
 namespace BitzArt.Blazor.MVVM.SampleApp;
@@ -14,6 +13,7 @@ public class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
+        builder.Services.AddRenderingEnvironment();
         builder.Services.AddBlazorViewModels();
 
         var app = builder.Build();

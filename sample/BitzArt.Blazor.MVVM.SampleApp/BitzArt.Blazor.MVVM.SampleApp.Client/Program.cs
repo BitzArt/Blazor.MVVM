@@ -8,6 +8,7 @@ internal class Program
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+        builder.Services.AddRenderingEnvironment();
         builder.Services.AddBlazorViewModels();
 
         await builder.Build().RunAsync();

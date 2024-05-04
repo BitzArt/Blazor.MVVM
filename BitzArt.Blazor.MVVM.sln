@@ -27,15 +27,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6EE1DDAF-17B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B22B408D-EEB8-4933-AED6-C5A225C50AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM", "src\BitzArt.Blazor.MVVM\BitzArt.Blazor.MVVM.csproj", "{1069F2AF-7A9C-47F2-91C2-E970295FEF38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitzArt.Blazor.MVVM", "src\BitzArt.Blazor.MVVM\BitzArt.Blazor.MVVM.csproj", "{1069F2AF-7A9C-47F2-91C2-E970295FEF38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.Tests", "tests\BitzArt.Blazor.MVVM.Tests\BitzArt.Blazor.MVVM.Tests.csproj", "{EDDA4260-98DF-42BD-A268-1FCE434916D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitzArt.Blazor.MVVM.Tests", "tests\BitzArt.Blazor.MVVM.Tests\BitzArt.Blazor.MVVM.Tests.csproj", "{EDDA4260-98DF-42BD-A268-1FCE434916D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{5123F2D4-DA61-4184-A05D-3573882BCAB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.SampleApp", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.csproj", "{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitzArt.Blazor.MVVM.SampleApp", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.csproj", "{807AE94D-9DD6-4B57-9ABA-93FA4EE68E90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.Blazor.MVVM.SampleApp.Client", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.Client\BitzArt.Blazor.MVVM.SampleApp.Client.csproj", "{9FD22113-A902-4D92-8060-45F6E1CBC114}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitzArt.Blazor.MVVM.SampleApp.Client", "sample\BitzArt.Blazor.MVVM.SampleApp\BitzArt.Blazor.MVVM.SampleApp.Client\BitzArt.Blazor.MVVM.SampleApp.Client.csproj", "{9FD22113-A902-4D92-8060-45F6E1CBC114}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B41215B5-9B6B-4165-BBBC-13364D482AA8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
