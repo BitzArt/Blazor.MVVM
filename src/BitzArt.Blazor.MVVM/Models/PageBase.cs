@@ -103,7 +103,7 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IPersistentC
         else
         {
             statefulViewModel.ComponentState = Activator.CreateInstance(statefulViewModel.StateType)!;
-            
+
             statefulViewModel.InitializeState();
             await statefulViewModel.InitializeStateAsync();
         }
