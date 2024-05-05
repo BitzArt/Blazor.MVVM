@@ -10,7 +10,7 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract partial class PageBase<TViewModel> : ComponentBase, IPersistentComponent
+public abstract partial class PageBase<TViewModel> : ComponentBase
     where TViewModel : ComponentViewModel
 {
     private const string StateKey = "state";
@@ -48,8 +48,9 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IPersistentC
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
+        ViewModel.StateChanged += StateHasChanged;
+
         await base.OnInitializedAsync();
-        ViewModel.Component = this;
 
         await RestoreStateAsync();
     }
@@ -107,11 +108,6 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IPersistentC
             statefulViewModel.InitializeState();
             await statefulViewModel.InitializeStateAsync();
         }
-    }
-
-    void IPersistentComponent.StateHasChanged()
-    {
-        StateHasChanged();
     }
 
     /// <summary>

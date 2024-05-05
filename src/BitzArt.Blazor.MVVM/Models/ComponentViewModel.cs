@@ -1,23 +1,24 @@
 ﻿namespace BitzArt.Blazor.MVVM;
 
 /// <summary>
-/// Base class for Blazor view models.
+/// Base class for Blazor components' ViewModels.
 /// </summary>
 public abstract class ComponentViewModel
 {
-    internal IPersistentComponent Component { get; set; } = null!;
+    public delegate void StateChangedEventHandler();
+    public event StateChangedEventHandler? StateChanged;
 
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
     protected void StateHasChanged()
     {
-        Component.StateHasChanged();
+        StateChanged?.Invoke();
     }
 }
 
 /// <summary>
-/// Base class for Blazor view models with state.
+/// Base class for Blazor components' ViewModels that have a State.
 /// </summary>
 /// <typeparam name="TState"></typeparam>
 public abstract class ComponentViewModel<TState> : ComponentViewModel, IStatefulViewModel
