@@ -7,7 +7,7 @@ public static class AddRenderingEnvironmentExtension
 {
     public static IServiceCollection AddRenderingEnvironment(this IServiceCollection services)
     {
-        services.AddTransient(x => x.GetRenderingEnvironment());
+        services.AddScoped(x => x.GetRenderingEnvironment());
 
         return services;
     }

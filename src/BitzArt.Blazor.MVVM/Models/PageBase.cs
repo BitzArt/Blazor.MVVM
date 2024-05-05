@@ -10,7 +10,7 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract partial class PageBase<TViewModel> : ComponentBase
+public abstract partial class PageBase<TViewModel> : ComponentBase, IStateComponent
     where TViewModel : ComponentViewModel
 {
     private const string StateKey = "state";
@@ -25,7 +25,7 @@ public abstract partial class PageBase<TViewModel> : ComponentBase
     private IJSRuntime Js { get; set; } = default!;
 
     [Inject]
-    private RenderingEnvironment RenderingEnvironment { get; set; } = null!;
+    protected RenderingEnvironment RenderingEnvironment { get; set; } = null!;
 
     /// <summary>
     /// Navigation manager.
@@ -48,10 +48,9 @@ public abstract partial class PageBase<TViewModel> : ComponentBase
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        ViewModel.StateChanged += StateHasChanged;
-
         await base.OnInitializedAsync();
-
+        ViewModel.Component = this;
+        ViewModel.RenderingEnvironment = RenderingEnvironment;
         await RestoreStateAsync();
     }
 
@@ -119,6 +118,8 @@ public abstract partial class PageBase<TViewModel> : ComponentBase
 
         return base.SetParametersAsync(parameters);
     }
+
+    void IStateComponent.StateHasChanged() => InvokeAsync(StateHasChanged);
 }
 
 internal static class StateJsonOptionsProvider

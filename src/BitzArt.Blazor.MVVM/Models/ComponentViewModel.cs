@@ -5,15 +5,16 @@
 /// </summary>
 public abstract class ComponentViewModel
 {
-    public delegate void StateChangedEventHandler();
-    public event StateChangedEventHandler? StateChanged;
+    internal IStateComponent Component { get; set; } = null!;
+
+    protected internal RenderingEnvironment RenderingEnvironment { get; internal set; } = null!;
 
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
     protected void StateHasChanged()
     {
-        StateChanged?.Invoke();
+        Component.StateHasChanged();
     }
 }
 
@@ -24,6 +25,7 @@ public abstract class ComponentViewModel
 public abstract class ComponentViewModel<TState> : ComponentViewModel, IStatefulViewModel
     where TState : class, new()
 {
+
     /// <summary>
     /// Persistent state of this view model.
     /// </summary>
