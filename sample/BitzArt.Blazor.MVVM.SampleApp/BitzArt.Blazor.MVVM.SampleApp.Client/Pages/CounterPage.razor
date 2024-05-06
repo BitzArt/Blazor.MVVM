@@ -14,6 +14,4 @@
 
 <button class="btn btn-primary" @onclick="ViewModel.IncrementCount">Click me</button>
 
-@{
-    base.BuildRenderTree(__builder);
-}
+<ComponentStateContainer ViewModel="ViewModel" />

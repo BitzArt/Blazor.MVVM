@@ -17,7 +17,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Models\ComponentStateContainer.razor.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="..\..\README.md" Pack="True" Visible="False" PackagePath="\" />
+		<None Include="ComponentStateContainer.razor.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

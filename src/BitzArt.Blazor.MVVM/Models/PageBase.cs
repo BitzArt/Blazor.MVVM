@@ -33,12 +33,6 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IStateCompon
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
 
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        var state = SerializeState();
-        if (state is not null) builder.AddMarkupContent(1, state);
-    }
-
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
     /// parameters from its parent in the render tree. Override this method if you will
@@ -52,32 +46,6 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IStateCompon
         ViewModel.Component = this;
         ViewModel.RenderingEnvironment = RenderingEnvironment;
         await RestoreStateAsync();
-    }
-
-    private string? SerializeState()
-    {
-        return SerializeComponentState(ViewModel, StateKey, strict: false);
-    }
-
-    private string? SerializeComponentState(ComponentViewModel viewModel, string key, bool strict = true)
-    {
-        if (ViewModel is not IStatefulViewModel statefulViewModel)
-        {
-            if (strict) throw new InvalidOperationException($"ViewModel '{viewModel.GetType().Name}' must implement IStatefulViewModel");
-            return null;
-        }
-
-        return Serialize(statefulViewModel.ComponentState, key);
-    }
-
-    private static string? Serialize(object state, string key)
-    {
-        if (state is null || OperatingSystem.IsBrowser())
-            return null;
-
-        var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
-        var base64 = Convert.ToBase64String(json);
-        return $"<script id=\"{key}\" type=\"text/template\">{base64}</script>";
     }
 
     private async Task RestoreStateAsync()
