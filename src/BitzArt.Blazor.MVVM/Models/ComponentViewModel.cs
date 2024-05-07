@@ -37,7 +37,11 @@ public abstract class ComponentViewModel<TState> : ComponentViewModel, IStateful
     public object ComponentState
     {
         get => State;
-        set => State = (TState)value;
+        set
+        {
+            State = (TState)value;
+            OnStateChanged(State);
+        }
     }
 
     /// <summary>
@@ -57,4 +61,9 @@ public abstract class ComponentViewModel<TState> : ComponentViewModel, IStateful
     {
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Called when the state has changed.
+    /// </summary>
+    protected virtual void OnStateChanged(TState state) { }
 }
