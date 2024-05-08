@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using static BitzArt.Blazor.MVVM.ViewModel;
 
 namespace BitzArt.Blazor.MVVM;
 
@@ -34,7 +35,12 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        ViewModel.OnStateHasChanged += () => InvokeAsync(StateHasChanged);
+        ViewModel.OnStateChange += async (_, args) =>
+        {
+            await InvokeAsync(StateHasChanged);
+            return args!;
+        };
+
         await RestoreStateAsync();
     }
 

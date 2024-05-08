@@ -6,15 +6,15 @@
 public abstract class ViewModel
 {
     public class StateChangeEventArgs : EventArgs { }
-    public delegate StateChangeEventArgs StateHasChangedHandler(StateChangeEventArgs? args);
-    public StateHasChangedHandler? OnStateHasChanged { get; set; }
+    public delegate Task<StateChangeEventArgs> StateHasChangedHandler(object sender, StateChangeEventArgs? args);
+    public StateHasChangedHandler? OnStateChange { get; set; }
 
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
     protected void StateHasChanged(StateChangeEventArgs? args = null)
     {
-        OnStateHasChanged?.Invoke(args);
+        OnStateChange?.Invoke(this, args);
     }
 }
 
