@@ -7,7 +7,7 @@ namespace BitzArt.Blazor.MVVM;
 
 public partial class ComponentStateContainer : ComponentBase
 {
-    [Parameter] public ComponentViewModel ViewModel { get; set; } = null!;
+    [Parameter] public ViewModel ViewModel { get; set; } = null!;
     [Parameter] public string StateKey { get; set; } = "state";
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -21,7 +21,7 @@ public partial class ComponentStateContainer : ComponentBase
         return SerializeComponentState(ViewModel, StateKey, strict: false);
     }
 
-    private string? SerializeComponentState(ComponentViewModel viewModel, string key, bool strict = true)
+    private string? SerializeComponentState(ViewModel viewModel, string key, bool strict = true)
     {
         if (ViewModel is not IStatefulViewModel statefulViewModel)
         {
@@ -29,7 +29,7 @@ public partial class ComponentStateContainer : ComponentBase
             return null;
         }
 
-        return Serialize(statefulViewModel.ComponentState, key);
+        return Serialize(statefulViewModel.State, key);
     }
 
     private static string? Serialize(object state, string key)

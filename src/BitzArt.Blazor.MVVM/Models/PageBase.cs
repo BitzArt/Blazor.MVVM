@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
 using System.Text;
 using System.Text.Json;
 
@@ -10,45 +8,19 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract partial class PageBase<TViewModel> : ComponentBase, IStateComponent
-    where TViewModel : ComponentViewModel
+public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateComponent
+    where TViewModel : ViewModel
 {
-    private const string StateKey = "state";
-
-    /// <summary>
-    /// This page's ViewModel.
-    /// </summary>
     [Inject]
-    protected TViewModel ViewModel { get; set; } = null!;
-
-    [Inject]
-    private IJSRuntime Js { get; set; } = default!;
-
-    [Inject]
-    protected RenderingEnvironment RenderingEnvironment { get; set; } = null!;
-
-    /// <summary>
-    /// Navigation manager.
-    /// </summary>
-    [Inject]
-    protected NavigationManager NavigationManager { get; set; } = null!;
-
-    /// <summary>
-    /// Method invoked when the component is ready to start, having received its initial
-    /// parameters from its parent in the render tree. Override this method if you will
-    /// perform an asynchronous operation and want the component to refresh when that
-    /// operation is completed.
-    /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task OnInitializedAsync()
+    public new TViewModel ViewModel
     {
-        await base.OnInitializedAsync();
-        ViewModel.Component = this;
-        ViewModel.RenderingEnvironment = RenderingEnvironment;
-        await RestoreStateAsync();
+        get => base.ViewModel;
+        set => base.ViewModel = value;
     }
 
-    private async Task RestoreStateAsync()
+    private const string StateKey = "state";
+
+    protected override async Task RestoreStateAsync()
     {
         var isPrerender = RenderingEnvironment.IsPrerender;
         var state = isPrerender
@@ -58,7 +30,7 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IStateCompon
         await RestoreComponentStateAsync(ViewModel, state);
     }
 
-    private async Task RestoreComponentStateAsync(ComponentViewModel viewModel, string? state)
+    private static async Task RestoreComponentStateAsync(ViewModel viewModel, string? state)
     {
         if (viewModel is not IStatefulViewModel statefulViewModel) return;
 
@@ -66,11 +38,12 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IStateCompon
         {
             var buffer = Convert.FromBase64String(state);
             var json = Encoding.UTF8.GetString(buffer);
-            statefulViewModel.ComponentState = JsonSerializer.Deserialize(json, statefulViewModel.StateType, StateJsonOptionsProvider.Options)!;
+            statefulViewModel.State = JsonSerializer.Deserialize(json, statefulViewModel.StateType, StateJsonOptionsProvider.Options)!;
+            statefulViewModel.OnStateRestored();
         }
         else
         {
-            statefulViewModel.ComponentState = Activator.CreateInstance(statefulViewModel.StateType)!;
+            statefulViewModel.State = Activator.CreateInstance(statefulViewModel.StateType)!;
 
             statefulViewModel.InitializeState();
             await statefulViewModel.InitializeStateAsync();
@@ -86,8 +59,6 @@ public abstract partial class PageBase<TViewModel> : ComponentBase, IStateCompon
 
         return base.SetParametersAsync(parameters);
     }
-
-    void IStateComponent.StateHasChanged() => InvokeAsync(StateHasChanged);
 }
 
 internal static class StateJsonOptionsProvider

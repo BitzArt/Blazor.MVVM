@@ -1,35 +1,32 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-public class CounterPageViewModel : ComponentViewModel<CounterPageViewModelState>
+public class CounterPageViewModel(
+    CounterViewModel counter1ViewModel,
+    CounterViewModel counter2ViewModel,
+    RenderingEnvironment renderingEnvironment)
+    : ViewModel<CounterPageViewModelState>
 {
-    private readonly Timer _timer;
-
-    public CounterPageViewModel()
-    {
-        _timer = new Timer(TimerIncrementCount, null, 1000, 1000);
-    }
-
-    private void TimerIncrementCount(object? state)
-    {
-        State.Count++;
-        StateHasChanged();
-    }
+    public CounterViewModel Counter1ViewModel { get; } = counter1ViewModel;
+    public CounterViewModel Counter2ViewModel { get; } = counter2ViewModel;
 
     public override void InitializeState()
     {
-        State.Count = 0;
-        State.Text = $"ViewModel State initialized on: {RenderingEnvironment}";
+        State.Text = $"ViewModel State initialized on: {renderingEnvironment}";
+
+        OnStateRestored();
+        Counter2ViewModel.State!.Count += 100;
     }
 
-    public void IncrementCount()
+    public override void OnStateRestored()
     {
-        State.Count++;
+        Counter1ViewModel.State = State.Counter1State;
+        Counter2ViewModel.State = State.Counter2State;
     }
 }
 
 public class CounterPageViewModelState
 {
-    public int? Count { get; set; } = null;
-
-    public string? Text { get; set; } = "State not initialized";
+    public string Text { get; set; } = "State not initialized";
+    public CounterState Counter1State { get; set; } = new();
+    public CounterState Counter2State { get; set; } = new();
 }

@@ -3,8 +3,9 @@
 internal interface IStatefulViewModel
 {
     public Type StateType { get; }
-    public object ComponentState { get; set; }
+    public object State { get; set; }
 
     public void InitializeState();
     public Task InitializeStateAsync();
+    public void OnStateRestored();
 }

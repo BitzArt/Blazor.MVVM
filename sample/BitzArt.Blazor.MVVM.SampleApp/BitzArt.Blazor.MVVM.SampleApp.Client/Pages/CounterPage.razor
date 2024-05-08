@@ -1,5 +1,5 @@
 ﻿@page "/counter"
-@rendermode @(new InteractiveAutoRenderMode(prerender: true))
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: true))
 @inherits PageBase<CounterPageViewModel>
 
 <PageTitle>Counter</PageTitle>
@@ -10,8 +10,7 @@
 
 <p>@ViewModel.State?.Text</p>
 
-<p role="status">Current count: @ViewModel.State?.Count</p>
-
-<button class="btn btn-primary" @onclick="ViewModel.IncrementCount">Click me</button>
+<Counter ViewModel="ViewModel.Counter1ViewModel" />
+<Counter ViewModel="ViewModel.Counter2ViewModel" />
 
 <ComponentStateContainer ViewModel="ViewModel" />

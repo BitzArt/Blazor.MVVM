@@ -1,0 +1,8 @@
+﻿@inherits ComponentBase<CounterViewModel>
+
+@if (ViewModel.State is not null)
+{
+    <p role="status">Current count: @ViewModel.State.Count</p>
+
+    <button class="btn btn-primary" @onclick="ViewModel.IncrementCount">Click me</button>
+}
