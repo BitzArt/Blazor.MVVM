@@ -72,5 +72,5 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     /// <summary>
     /// Called when the state has changed.
     /// </summary>
-    protected virtual void OnStateChanged(TState state) { }
+    public virtual void OnStateChanged(TState state) { }
 }
