@@ -7,5 +7,10 @@ internal interface IStatefulViewModel
 
     public void InitializeState();
     public Task InitializeStateAsync();
+
     public void OnStateRestored();
+    public Task OnStateRestoredAsync();
+
+    public void OnStateChanged();
+    public Task OnStateChangedAsync();
 }

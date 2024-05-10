@@ -39,6 +39,7 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
             var buffer = Convert.FromBase64String(state);
             var json = Encoding.UTF8.GetString(buffer);
             statefulViewModel.State = JsonSerializer.Deserialize(json, statefulViewModel.StateType, StateJsonOptionsProvider.Options)!;
+            await statefulViewModel.OnStateRestoredAsync();
             statefulViewModel.OnStateRestored();
         }
         else
@@ -48,6 +49,9 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
             statefulViewModel.InitializeState();
             await statefulViewModel.InitializeStateAsync();
         }
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
     }
 
     /// <summary>

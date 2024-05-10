@@ -33,11 +33,7 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     public TState State
     {
         get => _state;
-        set
-        {
-            _state = value;
-            OnStateChanged(State);
-        }
+        set => _state = value;
     }
 
     object IStatefulViewModel.State
@@ -69,8 +65,18 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     /// </summary>
     public virtual void OnStateRestored() { }
 
+    public virtual Task OnStateRestoredAsync()
+    {
+        return Task.CompletedTask;
+    }
+
     /// <summary>
     /// Called when the state has changed.
     /// </summary>
-    public virtual void OnStateChanged(TState state) { }
+    public virtual void OnStateChanged() { }
+
+    public virtual Task OnStateChangedAsync()
+    {
+        return Task.CompletedTask;
+    }
 }
