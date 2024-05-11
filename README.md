@@ -7,7 +7,9 @@
 
 ![Prerelease](https://img.shields.io/badge/prerelease%2C_work_in_progress-ffa624?style=for-the-badge)
 
-**BitzArt.Blazor.MVVM** is a lightweight MVVM library for Blazor applications. It provides a simple and flexible way to implement the MVVM pattern in your Blazor applications. The library is designed to be used together with Blazor United and persists the component state between renders.
+**BitzArt.Blazor.MVVM** is a lightweight MVVM library for Blazor applications. It provides a simple and flexible way to implement MVVM pattern in your Blazor applications.
+
+The library is designed to be used together with Blazor United with an ability to persist ViewModel state even when switching render modes. This allows for a complete prerendering of stateful components on page.
 
 Refer to the [documentation](https://bitzart.github.io/Blazor.MVVM) for more information.
 
