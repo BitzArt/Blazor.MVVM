@@ -22,17 +22,17 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
 
     protected override async Task RestoreStateAsync()
     {
+        await RestoreComponentStateAsync(ViewModel);
+    }
+
+    private async Task RestoreComponentStateAsync(ViewModel viewModel)
+    {
+        if (viewModel is not IStatefulViewModel statefulViewModel) return;
+
         var isPrerender = RenderingEnvironment.IsPrerender;
         var state = isPrerender
             ? null
             : await Js.InvokeAsync<string?>("getInnerText", [StateKey]);
-
-        await RestoreComponentStateAsync(ViewModel, state);
-    }
-
-    private static async Task RestoreComponentStateAsync(ViewModel viewModel, string? state)
-    {
-        if (viewModel is not IStatefulViewModel statefulViewModel) return;
 
         if (state is not null)
         {
