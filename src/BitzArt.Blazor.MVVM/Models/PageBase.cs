@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BitzArt.Blazor.MVVM;
 
@@ -74,6 +75,7 @@ internal static class StateJsonOptionsProvider
     public static readonly JsonSerializerOptions Options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 }
