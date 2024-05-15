@@ -25,6 +25,11 @@ public abstract class ViewModel
 public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     where TState : class, new()
 {
+    public ViewModel()
+    {
+        State = new();
+    }
+
     private TState _state = null!;
 
     /// <summary>
