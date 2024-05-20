@@ -4,19 +4,23 @@ namespace BitzArt.Blazor.MVVM;
 
 public interface IStateManager
 {
-    public byte[] SerializeState(ViewModel viewModel);
+    /// <summary>
+    /// Encodes the state of <see cref="ViewModel"/> into a base64 string.
+    /// </summary>
+    public string EncodeState(ViewModel viewModel);
 }
 
 internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
 {
     private const string NestedStateKey = "__ns";
 
-    public byte[] SerializeState(ViewModel viewModel)
+    /// <inheritdoc/>
+    public string EncodeState(ViewModel viewModel)
     {
         var state = GetState(viewModel);
         var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
 
-        return json;
+        return Convert.ToBase64String(json);
     }
 
     private Dictionary<string, object?> GetState(ViewModel viewModel)

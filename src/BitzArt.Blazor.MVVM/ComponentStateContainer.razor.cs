@@ -18,9 +18,8 @@ public partial class ComponentStateContainer : ComponentBase
 
     private string BuildStateElement()
     {
-        var json = StateManager.SerializeState(ViewModel);
-        var base64 = Convert.ToBase64String(json);
+        var stateEncoded = StateManager.EncodeState(ViewModel);
 
-        return $"<script id=\"{StateElementKey}\" type=\"text/template\">{base64}</script>";
+        return $"<script id=\"{StateElementKey}\" type=\"text/template\">{stateEncoded}</script>";
     }
 }
