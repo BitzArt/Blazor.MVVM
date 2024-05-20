@@ -15,6 +15,7 @@ public class Program
 
         builder.Services.AddRenderingEnvironment();
         builder.Services.AddBlazorMvvm().AddViewModels();
+        builder.Services.AddBlazorStateManager();
 
         var app = builder.Build();
 

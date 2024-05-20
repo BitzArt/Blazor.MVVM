@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace BitzArt.Blazor.MVVM;
 
@@ -8,6 +9,8 @@ public interface IViewModelFactory
 
     public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType);
     public TViewModel Create<TViewModel>(IServiceProvider serviceProvider) where TViewModel : ViewModel;
+
+    public IEnumerable<PropertyInfo> GetNestedViewModelProperties(Type viewModelType);
 }
 
 internal class ViewModelFactory : IViewModelFactory
@@ -49,5 +52,13 @@ internal class ViewModelFactory : IViewModelFactory
         }
         viewModel.OnDependenciesInjected();
         return viewModel;
+    }
+
+    public IEnumerable<PropertyInfo> GetNestedViewModelProperties(Type viewModelType)
+    {
+        var injectionMap = InjectionMaps.FirstOrDefault(x => x.ViewModelType == viewModelType)
+            ?? throw new InvalidOperationException($"ViewModel {viewModelType.Name} is not registered in the factory.");
+
+        return injectionMap.Injections.Select(x => x.Property);
     }
 }
