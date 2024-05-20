@@ -14,13 +14,13 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
 
     public byte[] SerializeState(ViewModel viewModel)
     {
-        var state = GetViewModelState(viewModel);
+        var state = GetState(viewModel);
         var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
 
         return json;
     }
 
-    private Dictionary<string, object?> GetViewModelState(ViewModel viewModel)
+    private Dictionary<string, object?> GetState(ViewModel viewModel)
     {
         var state = new Dictionary<string, object?>();
 
@@ -45,7 +45,7 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         foreach (var property in nestedViewModelProperties)
         {
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
-            var nestedViewModelState = GetViewModelState(nestedViewModel!);
+            var nestedViewModelState = GetState(nestedViewModel!);
             state.Add(property.Name, nestedViewModelState);
         }
 
