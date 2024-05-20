@@ -9,11 +9,6 @@ public class TestParentWithDuplicateChildViewModel : ViewModel
 
     [Inject]
     public TestDuplicateChildViewModel Child2 { get; set; } = null!;
-
-    public TestParentWithDuplicateChildViewModel()
-    {
-        Child1.Something.DoSomething();
-    }
 }
 
 public class TestDuplicateChildViewModel : ViewModel
