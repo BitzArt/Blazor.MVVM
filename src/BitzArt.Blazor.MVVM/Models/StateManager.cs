@@ -7,7 +7,7 @@ public interface IStateManager
     /// <summary>
     /// Encodes <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states into a base64 string.
     /// </summary>
-    public string EncodeState(ViewModel viewModel);
+    public string? EncodeState(ViewModel viewModel);
 }
 
 internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
@@ -15,15 +15,16 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
     private const string NestedStateKey = "__ns";
 
     /// <inheritdoc/>
-    public string EncodeState(ViewModel viewModel)
+    public string? EncodeState(ViewModel viewModel)
     {
         var state = GetState(viewModel);
-        var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
+        if (state is null) return null;
 
+        var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
         return Convert.ToBase64String(json);
     }
 
-    private Dictionary<string, object?> GetState(ViewModel viewModel)
+    private Dictionary<string, object?>? GetState(ViewModel viewModel)
     {
         var state = new Dictionary<string, object?>();
 
@@ -37,7 +38,7 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         if (nestedState is not null)
             state.Add(NestedStateKey, nestedState);
 
-        return state;
+        return state.Values.Count != 0 ? state : null;
     }
 
     private Dictionary<string, object?>? GetNestedState(ViewModel viewModel)
@@ -52,6 +53,9 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         {
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
             var nestedViewModelState = GetState(nestedViewModel!);
+
+            if (nestedViewModelState is null) continue;
+            
             state.Add(property.Name, nestedViewModelState);
         }
 
