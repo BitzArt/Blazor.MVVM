@@ -59,6 +59,6 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
             state.Add(property.Name, nestedViewModelState);
         }
 
-        return state;
+        return state.Values.Count != 0 ? state : null;
     }
 }
