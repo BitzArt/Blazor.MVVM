@@ -13,11 +13,14 @@ public partial class ComponentStateContainer : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         var stateElement = BuildStateElement();
-        if (stateElement is not null) builder.AddMarkupContent(1, stateElement);
+        if (stateElement is not null) 
+            builder.AddMarkupContent(1, stateElement);
     }
 
-    private string BuildStateElement()
+    private string? BuildStateElement()
     {
+        if (OperatingSystem.IsBrowser()) return null;
+
         var stateEncoded = StateManager.EncodeState(ViewModel);
 
         return $"<script id=\"{StateElementKey}\" type=\"text/template\">{stateEncoded}</script>";
