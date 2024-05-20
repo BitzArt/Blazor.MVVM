@@ -14,7 +14,7 @@ public class Program
             .AddInteractiveWebAssemblyComponents();
 
         builder.Services.AddRenderingEnvironment();
-        builder.Services.AddBlazorViewModels();
+        builder.Services.AddBlazorMvvm().AddViewModels();
 
         var app = builder.Build();
 

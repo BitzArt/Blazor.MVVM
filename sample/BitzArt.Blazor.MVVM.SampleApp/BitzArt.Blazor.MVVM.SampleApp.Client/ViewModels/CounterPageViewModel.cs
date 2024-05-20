@@ -1,13 +1,16 @@
-﻿namespace BitzArt.Blazor.MVVM.SampleApp;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace BitzArt.Blazor.MVVM.SampleApp;
 
 public class CounterPageViewModel(
-    CounterViewModel counter1ViewModel,
-    CounterViewModel counter2ViewModel,
     RenderingEnvironment renderingEnvironment)
     : ViewModel<CounterPageViewModelState>
 {
-    public CounterViewModel Counter1ViewModel { get; } = counter1ViewModel;
-    public CounterViewModel Counter2ViewModel { get; } = counter2ViewModel;
+    [Inject]
+    public CounterViewModel Counter1ViewModel { get; set; } = null!;
+
+    [Inject]
+    public CounterViewModel Counter2ViewModel { get; set; } = null!;
 
     public override void InitializeState()
     {

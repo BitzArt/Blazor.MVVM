@@ -12,10 +12,15 @@ public abstract class ViewModel
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
-    protected void StateHasChanged(StateChangeEventArgs? args = null)
+    protected void ComponentStateHasChanged(StateChangeEventArgs? args = null)
     {
         OnStateChange?.Invoke(this, args);
     }
+
+    /// <summary>
+    /// Called when this ViewModel's dependencies have been injected.
+    /// </summary>
+    protected internal void OnDependenciesInjected() { }
 }
 
 /// <summary>

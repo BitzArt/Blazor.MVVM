@@ -16,7 +16,7 @@ public class CounterViewModel : ViewModel
         if (State is null) return;
 
         State.Count++;
-        StateHasChanged();
+        ComponentStateHasChanged();
     }
 
     public void IncrementCount()
@@ -24,7 +24,7 @@ public class CounterViewModel : ViewModel
         if (State is null) return;
 
         State.Count++;
-        StateHasChanged();
+        ComponentStateHasChanged();
     }
 }
 

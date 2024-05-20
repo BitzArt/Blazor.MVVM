@@ -9,7 +9,7 @@ internal class Program
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
         builder.Services.AddRenderingEnvironment();
-        builder.Services.AddBlazorViewModels();
+        builder.Services.AddBlazorMvvm().AddViewModels();
 
         await builder.Build().RunAsync();
     }
