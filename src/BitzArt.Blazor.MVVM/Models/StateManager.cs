@@ -9,7 +9,6 @@ public interface IStateManager
 
 internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
 {
-    private const string ViewModelStateKey = "__vms";
     private const string NestedStateKey = "__ns";
 
     public byte[] SerializeState(ViewModel viewModel)
@@ -25,7 +24,10 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         var state = new Dictionary<string, object?>();
 
         if (viewModel is IStatefulViewModel statefulViewModel)
-            state.Add(ViewModelStateKey, statefulViewModel.State);
+        {
+            foreach (var property in statefulViewModel.State.GetType().GetProperties())
+                state.Add(property.Name, property.GetValue(statefulViewModel.State));
+        }
 
         var nestedState = GetNestedState(viewModel);
         if (nestedState is not null)
