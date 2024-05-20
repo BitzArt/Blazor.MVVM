@@ -12,11 +12,11 @@ public partial class ComponentStateContainer : ComponentBase
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        var stateElement = CreateStateElement();
+        var stateElement = BuildStateElement();
         if (stateElement is not null) builder.AddMarkupContent(1, stateElement);
     }
 
-    private string CreateStateElement()
+    private string BuildStateElement()
     {
         var json = StateManager.SerializeState(ViewModel);
         var base64 = Convert.ToBase64String(json);

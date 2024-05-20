@@ -1,9 +1,7 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-public class CounterViewModel : ViewModel
+public class CounterViewModel : ViewModel<CounterState>
 {
-    public CounterState? State { get; set; }
-
     private readonly Timer _timer;
 
     public CounterViewModel()
