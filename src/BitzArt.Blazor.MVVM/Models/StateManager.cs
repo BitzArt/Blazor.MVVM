@@ -36,13 +36,13 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
 
     private Dictionary<string, object?>? GetNestedState(ViewModel viewModel)
     {
-        var nestedViewModelProperties = viewModelFactory.GetNestedViewModelProperties(viewModel.GetType());
+        var properties = viewModelFactory.GetNestedViewModelProperties(viewModel.GetType());
 
-        if (!nestedViewModelProperties.Any()) return null;
+        if (!properties.Any()) return null;
 
         var state = new Dictionary<string, object?>();
 
-        foreach (var property in nestedViewModelProperties)
+        foreach (var property in properties)
         {
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
             var nestedViewModelState = GetState(nestedViewModel!);
