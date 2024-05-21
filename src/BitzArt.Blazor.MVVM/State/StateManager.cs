@@ -25,7 +25,10 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
     }
 
     /// <summary>
-    /// Returns a dictionary containing combined state of <see cref="ViewModel"/> and it's nested <see cref="ViewModel"/>s.
+    /// Returns a dictionary containing combined state of <see cref="ViewModel"/> 
+    /// and it's nested <see cref="ViewModel"/>s. <br />
+    /// If <see cref="ViewModel"/> does not have own state or nested <see cref="ViewModel"/>s' states, 
+    /// returns <see langword="null"/>.
     /// </summary>
     private Dictionary<string, object?>? GetCombinedState(ViewModel viewModel)
     {
@@ -45,7 +48,8 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
     }
 
     /// <summary>
-    /// Returns a dictionary containing states of nested <see cref="ViewModel"/>s.
+    /// Returns a dictionary containing states of nested <see cref="ViewModel"/>s. <br />
+    /// If there are no nested <see cref="ViewModel"/>s, returns <see langword="null"/>.
     /// </summary>
     private Dictionary<string, object?>? GetNestedState(ViewModel viewModel)
     {
