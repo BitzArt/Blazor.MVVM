@@ -17,14 +17,17 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
     /// <inheritdoc/>
     public string? EncodeState(ViewModel viewModel)
     {
-        var state = GetState(viewModel);
+        var state = GetCombinedState(viewModel);
         if (state is null) return null;
 
         var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
         return Convert.ToBase64String(json);
     }
 
-    private Dictionary<string, object?>? GetState(ViewModel viewModel)
+    /// <summary>
+    /// Returns a dictionary containing combined state of <see cref="ViewModel"/> and it's nested <see cref="ViewModel"/>s.
+    /// </summary>
+    private Dictionary<string, object?>? GetCombinedState(ViewModel viewModel)
     {
         var state = new Dictionary<string, object?>();
 
@@ -41,6 +44,9 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         return state.Values.Count != 0 ? state : null;
     }
 
+    /// <summary>
+    /// Returns a dictionary containing states of nested <see cref="ViewModel"/>s.
+    /// </summary>
     private Dictionary<string, object?>? GetNestedState(ViewModel viewModel)
     {
         var properties = viewModelFactory.GetNestedViewModelProperties(viewModel.GetType());
@@ -52,7 +58,7 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         foreach (var property in properties)
         {
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
-            var nestedViewModelState = GetState(nestedViewModel!);
+            var nestedViewModelState = GetCombinedState(nestedViewModel!);
 
             if (nestedViewModelState is null) continue;
             
