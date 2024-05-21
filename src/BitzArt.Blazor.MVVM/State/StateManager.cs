@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace BitzArt.Blazor.MVVM;
 
@@ -7,15 +8,14 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
     private const string NestedStateKey = "__ns_";
 
     /// <inheritdoc/>
-    public string? EncodeState(ViewModel viewModel)
+    public byte[]? SerializeState(ViewModel viewModel)
     {
         var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
         var state = GetState(viewModel, injectionMap);
 
         if (state is null) return null;
 
-        var json = JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
-        return Convert.ToBase64String(json);
+        return JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
     }
 
     private Dictionary<string, object?>? GetState(ViewModel viewModel, ViewModelInjectionMap injectionMap)
@@ -40,5 +40,78 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         }
 
         return state.Values.Count != 0 ? state : null;
+    }
+
+    /// <inheritdoc/>
+    public async Task RestoreStateAsync(ViewModel viewModel, string json)
+    {
+        var node = JsonNode.Parse(json);
+
+        if (node is null) return;
+
+        var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
+        await RestoreStateAsync(viewModel, node, injectionMap);
+    }
+
+    private async Task RestoreStateAsync(ViewModel viewModel, JsonNode node, ViewModelInjectionMap injectionMap)
+    {
+        foreach (var injection in injectionMap.Injections)
+        {
+            var property = injection.Property;
+            var jsonKey = $"{NestedStateKey}{property.Name}";
+            var nestedNode = node[jsonKey];
+
+            if (nestedNode is null) continue;
+
+            var nestedViewModel = property.GetValue(viewModel) as ViewModel;
+            var nestedMap = viewModelFactory.GetInjectionMap(injection.ViewModelType);
+
+            await RestoreStateAsync(nestedViewModel!, nestedNode, nestedMap);
+
+            node.AsObject().Remove(jsonKey);
+        }
+
+        if (viewModel is not IStatefulViewModel statefulViewModel) return;
+
+        var state = JsonSerializer.Deserialize(node, statefulViewModel.StateType, StateJsonOptionsProvider.Options);
+        statefulViewModel.State = state!;
+
+        statefulViewModel.OnStateRestored();
+        await statefulViewModel.OnStateRestoredAsync();
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task InitializeStateAsync(ViewModel viewModel)
+    {
+        var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
+        await InitializeStateAsync(viewModel, injectionMap);
+    }
+
+    private async Task InitializeStateAsync(ViewModel viewModel, ViewModelInjectionMap injectionMap)
+    {
+        foreach (var injection in injectionMap.Injections)
+        {
+            var property = injection.Property;
+            var nestedViewModel = property.GetValue(viewModel) as ViewModel;
+            var nestedMap = viewModelFactory.GetInjectionMap(injection.ViewModelType);
+
+            await InitializeStateAsync(nestedViewModel!, nestedMap);
+        }
+
+        if (viewModel is not IStatefulViewModel statefulViewModel) return;
+
+        statefulViewModel.State = Activator.CreateInstance(statefulViewModel.StateType)!;
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
+
+        statefulViewModel.InitializeState();
+        await statefulViewModel.InitializeStateAsync();
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
     }
 }

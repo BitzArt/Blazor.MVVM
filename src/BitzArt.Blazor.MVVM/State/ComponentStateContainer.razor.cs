@@ -21,8 +21,10 @@ public partial class ComponentStateContainer : ComponentBase
     {
         if (OperatingSystem.IsBrowser()) return null;
 
-        var stateEncoded = StateManager.EncodeState(ViewModel);
-        if (stateEncoded is null) return null;
+        var json = StateManager.SerializeState(ViewModel);
+        if (json is null) return null;
+
+        var stateEncoded = Convert.ToBase64String(json);
 
         return $"<script id=\"{StateElementKey}\" type=\"text/template\">{stateEncoded}</script>";
     }
