@@ -10,7 +10,7 @@ public interface IViewModelFactory
     public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType);
     public TViewModel Create<TViewModel>(IServiceProvider serviceProvider) where TViewModel : ViewModel;
 
-    public IEnumerable<PropertyInfo> GetNestedViewModelProperties(Type viewModelType);
+    public ViewModelInjectionMap GetInjectionMap(Type viewModelType);
 }
 
 internal class ViewModelFactory : IViewModelFactory
@@ -54,11 +54,11 @@ internal class ViewModelFactory : IViewModelFactory
         return viewModel;
     }
 
-    public IEnumerable<PropertyInfo> GetNestedViewModelProperties(Type viewModelType)
+    public ViewModelInjectionMap GetInjectionMap(Type viewModelType)
     {
         var injectionMap = InjectionMaps.FirstOrDefault(x => x.ViewModelType == viewModelType)
             ?? throw new InvalidOperationException($"ViewModel {viewModelType.Name} is not registered in the factory.");
 
-        return injectionMap.Injections.Select(x => x.Property);
+        return injectionMap;
     }
 }

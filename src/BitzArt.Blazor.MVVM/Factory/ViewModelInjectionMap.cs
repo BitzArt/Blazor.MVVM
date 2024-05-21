@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace BitzArt.Blazor.MVVM;
 
-internal class ViewModelInjectionMap
+public class ViewModelInjectionMap
 {
     public Type ViewModelType { get; set; }
 
