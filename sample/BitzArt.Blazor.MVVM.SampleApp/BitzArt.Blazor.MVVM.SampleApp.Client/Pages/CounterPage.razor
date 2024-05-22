@@ -4,13 +4,29 @@
 
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
-
 <p>Current render mode: @RenderingEnvironment</p>
 
 <p>@ViewModel.State?.Text</p>
 
-<Counter ViewModel="ViewModel.Counter1" />
-<Counter ViewModel="ViewModel.Counter2" />
+<Counter
+    ViewModel="ViewModel.Counter1"
+    Description="This counter was initialized while prerendering" />
+
+@if (RenderingEnvironment.IsPrerender)
+{
+    <h4 style="margin-top: 2rem;">
+        Awaiting interactivity...
+    </h4>
+}
+else
+{
+    <Counter
+        ViewModel="ViewModel.Counter2"
+        Description="This counter's value was increased by a parent" />
+
+    <Counter
+        ViewModel="ViewModel.Counter3"
+        Description="This counter's value is being increased by a timer"/>
+}
 
 <ComponentStateContainer ViewModel="ViewModel" />

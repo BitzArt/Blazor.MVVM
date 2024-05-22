@@ -1,25 +1,32 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-namespace BitzArt.Blazor.MVVM.SampleApp;
-
-public class CounterPageViewModel(
-    RenderingEnvironment renderingEnvironment)
+public class CounterPageViewModel(RenderingEnvironment renderingEnvironment)
     : ViewModel<CounterPageViewModelState>
 {
-    [Inject]
+    [NestViewModel]
     public CounterViewModel Counter1 { get; set; } = null!;
 
-    [Inject]
+    [NestViewModel]
     public CounterViewModel Counter2 { get; set; } = null!;
+
+    [NestViewModel]
+    public CounterViewModel Counter3 { get; set; } = null!;
 
     public override void InitializeState()
     {
-        State.Text = $"ViewModel State initialized on: {renderingEnvironment}";
-        Counter2.State!.Count = 100;
+        State.Text = $"Page State initialized on: {renderingEnvironment}";
+    }
+
+    protected override void OnDependenciesInjected()
+    {
+        Counter2.OnStateInitialized += (_) =>
+        {
+            Counter2.State!.Count += 100;
+        };
     }
 }
 
-public class CounterPageViewModelState
+public class CounterPageViewModelState : ComponentState
 {
-    public string Text { get; set; } = "State not initialized";
+    public string Text { get; set; } = "Page State not initialized";
 }

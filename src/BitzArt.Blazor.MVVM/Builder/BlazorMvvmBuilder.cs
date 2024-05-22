@@ -6,7 +6,7 @@ public interface IBlazorMvvmBuilder
 {
     public IServiceCollection ServiceCollection { get; }
 
-    public IViewModelFactory Factory { get; }
+    internal IViewModelFactory Factory { get; }
 }
 
 internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
@@ -27,5 +27,6 @@ internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
 
         ServiceCollection.AddSingleton(Factory);
         ServiceCollection.AddSingleton<BlazorViewModelStateManager>();
+        ServiceCollection.AddScoped<PageStateDictionaryContainer>();
     }
 }

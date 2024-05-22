@@ -72,7 +72,7 @@ public static class AddViewModelExtensions
         builder.ServiceCollection.AddTransient(viewModelType, serviceProvider =>
         {
             var factory = serviceProvider.GetRequiredService<IViewModelFactory>();
-            return factory.Create(serviceProvider, viewModelType);
+            return factory.Create(serviceProvider, viewModelType, new RootComponentSignature());
         });
 
         return builder;
@@ -92,7 +92,7 @@ public static class AddViewModelExtensions
         builder.ServiceCollection.AddTransient(serviceProvider =>
         {
             var factory = serviceProvider.GetRequiredService<IViewModelFactory>();
-            return factory.Create<TViewModel>(serviceProvider);
+            return factory.Create<TViewModel>(serviceProvider, new RootComponentSignature());
         });
 
         return builder;

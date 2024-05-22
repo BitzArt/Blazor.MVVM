@@ -1,37 +1,50 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-public class CounterViewModel : ViewModel<CounterState>
+public class CounterViewModel(RenderingEnvironment renderingEnvironment)
+    : ViewModel<CounterState>, IDisposable
 {
-    private readonly Timer _timer;
+    [ParentViewModel]
+    public CounterPageViewModel Parent { get; set; } = null!;
 
-    public CounterViewModel()
+    private Timer? _timer;
+
+    public string NameOnPage
     {
-        _timer = new Timer(TimerIncrementCount, null, 1000, 1000);
+        get
+        {
+            if (this == Parent.Counter1) return "Counter 1";
+            if (this == Parent.Counter2) return "Counter 2";
+            if (this == Parent.Counter3) return "Counter 3";
+            return string.Empty;
+        }
     }
 
     public override void InitializeState()
     {
-        State.Count = 0;
+        State.Text = $"Counter State initialized on: {renderingEnvironment}";
     }
 
-    private void TimerIncrementCount(object? state)
+    protected override void OnDependenciesInjected()
     {
-        if (State is null) return;
+        if (this == Parent.Counter3) _timer = new Timer(IncrementCount, null, 1000, 1000);
+    }
 
+    public void IncrementCount(object? state = null)
+    {
         State.Count++;
         ComponentStateHasChanged();
     }
 
-    public void IncrementCount()
+    public void Dispose()
     {
-        if (State is null) return;
-
-        State.Count++;
-        ComponentStateHasChanged();
+        _timer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 
-public class CounterState
+public class CounterState : ComponentState
 {
-    public int? Count { get; set; }
+    public int Count { get; set; } = 0;
+
+    public string Text { get; set; } = "Counter State not initialized";
 }

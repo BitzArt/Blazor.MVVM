@@ -3,7 +3,7 @@
 internal interface IStatefulViewModel
 {
     public Type StateType { get; }
-    public object State { get; set; }
+    public ComponentState State { get; set; }
 
     public void InitializeState();
     public Task InitializeStateAsync();
@@ -13,4 +13,7 @@ internal interface IStatefulViewModel
 
     public void OnStateChanged();
     public Task OnStateChangedAsync();
+
+    public StateInitializedHandler? OnStateInitialized { get; set; }
+    public StateInitializedAsyncHandler? OnStateInitializedAsync { get; set; }
 }

@@ -8,7 +8,7 @@ public class TestStatefulParentViewModel : ViewModel<TestStatefulParentViewModel
     public TestNestedStatefulViewModel TestNestedStatefulViewModel { get; set; } = null!;
 }
 
-public class TestStatefulParentViewModelState
+public class TestStatefulParentViewModelState : ComponentState
 {
     public string Title { get; set; } = "Title";
 }

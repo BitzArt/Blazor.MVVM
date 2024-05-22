@@ -1,26 +1,42 @@
-﻿namespace BitzArt.Blazor.MVVM;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace BitzArt.Blazor.MVVM;
 
 /// <summary>
 /// ViewModel base class.
 /// </summary>
 public abstract class ViewModel
 {
-    public class StateChangeEventArgs : EventArgs { }
-    public delegate Task<StateChangeEventArgs> StateHasChangedHandler(object sender, StateChangeEventArgs? args);
-    public StateHasChangedHandler? OnStateChange { get; set; }
+    [Inject]
+    private protected IViewModelFactory ViewModelFactory { get; set; } = null!;
+
+    [Inject]
+    private protected IServiceProvider ServiceProvider { get; set; } = null!;
+
+    internal ComponentSignature Signature { get; set; } = null!;
+
+    protected TViewModel CreateNestedViewModel<TViewModel>()
+        where TViewModel : ViewModel
+    {
+        var nestedSignature = Signature.NestNew();
+        return ViewModelFactory.Create<TViewModel>(ServiceProvider, nestedSignature);
+    }
+
+    public delegate Task ComponentStateHasChangedHandler(object sender);
+    public ComponentStateHasChangedHandler? OnComponentStateChanged { get; set; }
 
     /// <summary>
     /// Notifies the component that the state has changed.
     /// </summary>
-    protected void ComponentStateHasChanged(StateChangeEventArgs? args = null)
+    protected void ComponentStateHasChanged()
     {
-        OnStateChange?.Invoke(this, args);
+        OnComponentStateChanged?.Invoke(this);
     }
 
     /// <summary>
     /// Called when this ViewModel's dependencies have been injected.
     /// </summary>
-    protected internal void OnDependenciesInjected() { }
+    protected internal virtual void OnDependenciesInjected() { }
 }
 
 /// <summary>
@@ -28,11 +44,47 @@ public abstract class ViewModel
 /// </summary>
 /// <typeparam name="TState"></typeparam>
 public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
-    where TState : class, new()
+    where TState : ComponentState, new()
 {
     public ViewModel()
     {
         State = new();
+    }
+
+    public bool IsStateInitialized { get; set; }
+
+    private StateInitializedHandler _onStateInitializedHandler = null!;
+    public StateInitializedHandler? OnStateInitialized
+    {
+        get => _onStateInitializedHandler;
+        set
+        {
+            var initialValue = _onStateInitializedHandler;
+
+            _onStateInitializedHandler = value!;
+            if (IsStateInitialized)
+            {
+                var diff = value - initialValue;
+                diff!.Invoke(this);
+            }
+        }
+    }
+
+    private StateInitializedAsyncHandler _onStateInitializedAsyncHandler = null!;
+    public StateInitializedAsyncHandler? OnStateInitializedAsync
+    {
+        get => _onStateInitializedAsyncHandler;
+        set
+        {
+            var initialValue = _onStateInitializedAsyncHandler;
+            
+            _onStateInitializedAsyncHandler = value!;
+            if (IsStateInitialized)
+            {
+                var diff = value - initialValue;
+                diff!.Invoke(this);
+            }
+        }
     }
 
     private TState _state = null!;
@@ -46,7 +98,7 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
         set => _state = value;
     }
 
-    object IStatefulViewModel.State
+    ComponentState IStatefulViewModel.State
     {
         get => State;
         set => State = (TState)value;
@@ -90,3 +142,6 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
         return Task.CompletedTask;
     }
 }
+
+public delegate void StateInitializedHandler(object sender);
+public delegate Task StateInitializedAsyncHandler(object sender);

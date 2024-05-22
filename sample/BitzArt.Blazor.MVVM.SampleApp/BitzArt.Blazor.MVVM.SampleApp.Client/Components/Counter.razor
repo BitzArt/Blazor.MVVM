@@ -1,8 +1,15 @@
 ﻿@inherits ComponentBase<CounterViewModel>
 
-@if (ViewModel.State is not null)
-{
+<div class="card">
+
+    <h4>@ViewModel.NameOnPage</h4>
+
     <p role="status">Current count: @ViewModel.State.Count</p>
 
     <button class="btn btn-primary" @onclick="ViewModel.IncrementCount">Click me</button>
-}
+
+    <small style="margin-top:1rem;">@ViewModel.State.Text</small>
+
+    <small style="margin-top:1rem;">@Description</small>
+
+</div>

@@ -2,12 +2,12 @@
 
 namespace BitzArt.Blazor.MVVM;
 
-public interface IViewModelFactory
+internal interface IViewModelFactory
 {
     public void AddViewModel(Type viewModelType, string registrationKey);
 
-    public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType);
-    public TViewModel Create<TViewModel>(IServiceProvider serviceProvider) where TViewModel : ViewModel;
+    public TViewModel Create<TViewModel>(IServiceProvider serviceProvider, ComponentSignature? signature, ViewModel? parent = null) where TViewModel : ViewModel;
+    public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType, ComponentSignature? signature, ViewModel? parent = null, List<ViewModel>? affectedViewModels = null);
 }
 
 internal class ViewModelFactory : IViewModelFactory
@@ -30,22 +30,49 @@ internal class ViewModelFactory : IViewModelFactory
         InjectionMaps.Add(viewModelType, new(viewModelType, registrationKey));
     }
 
-    public TViewModel Create<TViewModel>(IServiceProvider serviceProvider)
+    public TViewModel Create<TViewModel>(IServiceProvider serviceProvider, ComponentSignature? signature, ViewModel? parent = null)
         where TViewModel : ViewModel
-        => (TViewModel)Create(serviceProvider, typeof(TViewModel));
+        => (TViewModel)Create(serviceProvider, typeof(TViewModel), signature, parent);
 
-    public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType)
+    public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType, ComponentSignature? signature, ViewModel? parent = null, List<ViewModel>? affectedViewModels = null)
     {
+        signature ??= new RootComponentSignature();
+        var isRoot = signature is RootComponentSignature;
+        affectedViewModels ??= [];
+
         var viewModelMap = InjectionMaps.GetValueOrDefault(viewModelType)
             ?? throw new InvalidOperationException($"ViewModel {viewModelType.Name} is not registered in the factory.");
 
         var viewModel = (ViewModel)serviceProvider.GetRequiredKeyedService(typeof(ViewModel), viewModelMap.RegistrationKey);
+        viewModel.Signature = signature;
+
         foreach (var injection in viewModelMap.Injections)
         {
-            var injectedViewModel = Create(serviceProvider, injection.ViewModelType);
-            injection.Property.SetValue(viewModel, injectedViewModel);
+            if (injection.IsServiceInjection)
+            {
+                var injectedDependency = serviceProvider.GetRequiredService(injection.DependencyType);
+                injection.Property.SetValue(viewModel, injectedDependency);
+            }
+
+            else if (injection.IsNestedViewModelInjection)
+            {
+                var nestedSignature = new ComponentSignature(parent: signature);
+                var injectedViewModel = Create(serviceProvider, injection.DependencyType, nestedSignature, parent: viewModel, affectedViewModels: affectedViewModels);
+                injection.Property.SetValue(viewModel, injectedViewModel);
+            }
+            
+            else if (injection.IsParentViewModelInjection)
+            {
+                if (parent is null) throw new InvalidOperationException(
+                    $"Parent injection '{injection.Property.Name}' in {viewModelType.Name} requires a parent ViewModel, but no parent was found in current ViewModel hierarchy.");
+                injection.Property.SetValue(viewModel, parent);
+            }
         }
-        viewModel.OnDependenciesInjected();
+
+        affectedViewModels.Add(viewModel);
+
+        if (isRoot) foreach (var affected in affectedViewModels) affected.OnDependenciesInjected();
+
         return viewModel;
     }
 

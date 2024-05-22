@@ -9,7 +9,7 @@ namespace BitzArt.Blazor.MVVM;
 /// Blazor page base class with view model support.
 /// </summary>
 /// <typeparam name="TViewModel">Type of this component's ViewModel</typeparam>
-public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateComponent
+public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateComponent, IDisposable
     where TViewModel : ViewModel
 {
     [Inject]
@@ -19,33 +19,19 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         set => base.ViewModel = value;
     }
 
-    [Inject] private BlazorViewModelStateManager StateManager { get; set; } = null!;
-
     private const string StateKey = "state";
 
     protected override async Task RestoreStateAsync()
     {
-        await RestoreComponentStateAsync(ViewModel);
-    }
+        var state = await Js.InvokeAsync<string?>("getInnerText", [StateKey]);
+        var buffer = Convert.FromBase64String(state!);
+        var json = Encoding.UTF8.GetString(buffer);
 
-    private async Task RestoreComponentStateAsync(ViewModel viewModel)
-    {
-        var isPrerender = RenderingEnvironment.IsPrerender;
-        var state = isPrerender
-            ? null
-            : await Js.InvokeAsync<string?>("getInnerText", [StateKey]);
+        var pageState = await StateManager.RestoreStateAsync(ViewModel, json);
+        PageStateDictionaryContainer.PageStateDictionary = pageState;
+        PageStateDictionaryContainer.MarkConfigured();
 
-        if (state is not null)
-        {
-            var buffer = Convert.FromBase64String(state);
-            var json = Encoding.UTF8.GetString(buffer);
-
-            await StateManager.RestoreStateAsync(viewModel, json);
-        }
-        else
-        {
-            await StateManager.InitializeStateAsync(viewModel);
-        }
+        await base.RestoreStateAsync();
     }
 
     /// <summary>
@@ -56,6 +42,11 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         ViewModel.SetParametersFromQueryString(NavigationManager);
 
         return base.SetParametersAsync(parameters);
+    }
+
+    public void Dispose()
+    {
+        PageStateDictionaryContainer.Dispose();
     }
 }
 
