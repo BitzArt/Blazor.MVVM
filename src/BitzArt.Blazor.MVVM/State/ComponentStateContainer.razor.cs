@@ -8,6 +8,9 @@ public partial class ComponentStateContainer : ComponentBase
     [Inject]
     private BlazorViewModelStateManager StateManager { get; set; } = null!;
 
+    [Inject]
+    private RenderingEnvironment RenderingEnvironment { get; set; } = null!;
+
     [Parameter]
     public ViewModel ViewModel { get; set; } = null!;
 
@@ -23,7 +26,7 @@ public partial class ComponentStateContainer : ComponentBase
 
     private string? BuildStateElement()
     {
-        if (OperatingSystem.IsBrowser()) return null;
+        if (!RenderingEnvironment.IsPrerender) return null;
 
         var json = StateManager.SerializeState(ViewModel);
         if (json is null) return null;

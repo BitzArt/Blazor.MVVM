@@ -9,6 +9,11 @@ public class CounterViewModel : ViewModel<CounterState>
         _timer = new Timer(TimerIncrementCount, null, 1000, 1000);
     }
 
+    public override void InitializeState()
+    {
+        State.Count = 0;
+    }
+
     private void TimerIncrementCount(object? state)
     {
         if (State is null) return;
@@ -28,5 +33,5 @@ public class CounterViewModel : ViewModel<CounterState>
 
 public class CounterState
 {
-    public int Count { get; set; } = 0;
+    public int? Count { get; set; };
 }

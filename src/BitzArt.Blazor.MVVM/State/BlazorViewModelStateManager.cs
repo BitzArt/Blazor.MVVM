@@ -7,7 +7,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
 {
     private ViewModelFactory _viewModelFactory { get; } = (ViewModelFactory)viewModelFactory;
 
-    private const string _nestedStatePrefix = "__ns_";
+    private const string _nestedStatePrefix = "n__";
 
     /// <summary>
     /// Serializes states in <see cref="ViewModel"/>s hierarchy to JSON encoded as UTF-8 bytes.
