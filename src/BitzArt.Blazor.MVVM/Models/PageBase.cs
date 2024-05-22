@@ -19,6 +19,8 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         set => base.ViewModel = value;
     }
 
+    [Inject] private BlazorViewModelStateManager StateManager { get; set; } = null!;
+
     private const string StateKey = "state";
 
     protected override async Task RestoreStateAsync()
@@ -28,8 +30,6 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
 
     private async Task RestoreComponentStateAsync(ViewModel viewModel)
     {
-        if (viewModel is not IStatefulViewModel statefulViewModel) return;
-
         var isPrerender = RenderingEnvironment.IsPrerender;
         var state = isPrerender
             ? null
@@ -39,24 +39,13 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         {
             var buffer = Convert.FromBase64String(state);
             var json = Encoding.UTF8.GetString(buffer);
-            statefulViewModel.State = JsonSerializer.Deserialize(json, statefulViewModel.StateType, StateJsonOptionsProvider.Options)!;
-            
-            statefulViewModel.OnStateRestored();
-            await statefulViewModel.OnStateRestoredAsync();
+
+            await StateManager.RestoreStateAsync(viewModel, json);
         }
         else
         {
-            statefulViewModel.State = Activator.CreateInstance(statefulViewModel.StateType)!;
-
-            statefulViewModel.OnStateChanged();
-            await statefulViewModel.OnStateChangedAsync();
-
-            statefulViewModel.InitializeState();
-            await statefulViewModel.InitializeStateAsync();
+            await StateManager.InitializeStateAsync(viewModel);
         }
-
-        statefulViewModel.OnStateChanged();
-        await statefulViewModel.OnStateChangedAsync();
     }
 
     /// <summary>
@@ -75,6 +64,7 @@ internal static class StateJsonOptionsProvider
     public static readonly JsonSerializerOptions Options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };

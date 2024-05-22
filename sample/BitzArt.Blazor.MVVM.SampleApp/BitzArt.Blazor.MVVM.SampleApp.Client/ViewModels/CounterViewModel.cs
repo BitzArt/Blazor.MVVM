@@ -1,14 +1,17 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
-public class CounterViewModel : ViewModel
+public class CounterViewModel : ViewModel<CounterState>
 {
-    public CounterState? State { get; set; }
-
     private readonly Timer _timer;
 
     public CounterViewModel()
     {
         _timer = new Timer(TimerIncrementCount, null, 1000, 1000);
+    }
+
+    public override void InitializeState()
+    {
+        State.Count = 0;
     }
 
     private void TimerIncrementCount(object? state)
@@ -30,5 +33,5 @@ public class CounterViewModel : ViewModel
 
 public class CounterState
 {
-    public int Count { get; set; } = 0;
+    public int? Count { get; set; };
 }
