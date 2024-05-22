@@ -9,8 +9,6 @@ public interface IViewModelFactory
 
     public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType);
     public TViewModel Create<TViewModel>(IServiceProvider serviceProvider) where TViewModel : ViewModel;
-
-    public ViewModelInjectionMap GetInjectionMap(Type viewModelType);
 }
 
 internal class ViewModelFactory : IViewModelFactory

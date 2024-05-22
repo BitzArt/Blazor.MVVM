@@ -15,7 +15,9 @@ internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
 
     public IViewModelFactory Factory { get; set; }
 
-    public BlazorMvvmBuilder(IServiceCollection serviceCollection, IViewModelFactory factory)
+    public BlazorMvvmBuilder(
+        IServiceCollection serviceCollection, 
+        IViewModelFactory factory)
     {
         ServiceCollection = serviceCollection;
         Factory = factory;
@@ -24,5 +26,6 @@ internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
             throw new InvalidOperationException("IViewModelFactory is already registered in this ServiceCollection.");
 
         ServiceCollection.AddSingleton(Factory);
+        ServiceCollection.AddSingleton(new BlazorViewModelStateManager(Factory));
     }
 }

@@ -19,7 +19,7 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         set => base.ViewModel = value;
     }
 
-    [Inject] private IStateManager StateManager { get; set; } = null!;
+    [Inject] private BlazorViewModelStateManager StateManager { get; set; } = null!;
 
     private const string StateKey = "state";
 

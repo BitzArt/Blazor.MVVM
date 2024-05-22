@@ -3,14 +3,19 @@ using System.Text.Json.Nodes;
 
 namespace BitzArt.Blazor.MVVM;
 
-internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
+internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
 {
-    private const string NestedStateKey = "__ns_";
+    private ViewModelFactory _viewModelFactory { get; } = (ViewModelFactory)viewModelFactory;
 
-    /// <inheritdoc/>
+    private const string _nestedStateKey = "__ns_";
+
+    /// <summary>
+    /// Serializes <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states 
+    /// to JSON encoded as UTF-8 bytes.
+    /// </summary>
     public byte[]? SerializeState(ViewModel viewModel)
     {
-        var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
+        var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
         var state = GetState(viewModel, injectionMap);
 
         if (state is null) return null;
@@ -32,24 +37,26 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         {
             var property = injection.Property;
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
-            var nestedMap = viewModelFactory.GetInjectionMap(injection.ViewModelType);
+            var nestedMap = _viewModelFactory.GetInjectionMap(injection.ViewModelType);
             var nestedState = GetState(nestedViewModel!, nestedMap);
 
             if (nestedState is not null)
-                state.Add($"{NestedStateKey}{property.Name}", nestedState);
+                state.Add($"{_nestedStateKey}{property.Name}", nestedState);
         }
 
         return state.Values.Count != 0 ? state : null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Restores <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states from JSON string.
+    /// </summary>
     public async Task RestoreStateAsync(ViewModel viewModel, string json)
     {
         var node = JsonNode.Parse(json);
 
         if (node is null) return;
 
-        var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
+        var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
         await RestoreStateAsync(viewModel, node, injectionMap);
     }
 
@@ -58,13 +65,13 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         foreach (var injection in injectionMap.Injections)
         {
             var property = injection.Property;
-            var jsonKey = $"{NestedStateKey}{property.Name}";
+            var jsonKey = $"{_nestedStateKey}{property.Name}";
             var nestedNode = node[jsonKey];
 
             if (nestedNode is null) continue;
 
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
-            var nestedMap = viewModelFactory.GetInjectionMap(injection.ViewModelType);
+            var nestedMap = _viewModelFactory.GetInjectionMap(injection.ViewModelType);
 
             await RestoreStateAsync(nestedViewModel!, nestedNode, nestedMap);
 
@@ -83,10 +90,12 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         await statefulViewModel.OnStateChangedAsync();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states.
+    /// </summary>
     public async Task InitializeStateAsync(ViewModel viewModel)
     {
-        var injectionMap = viewModelFactory.GetInjectionMap(viewModel.GetType());
+        var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
         await InitializeStateAsync(viewModel, injectionMap);
     }
 
@@ -96,7 +105,7 @@ internal class StateManager(IViewModelFactory viewModelFactory) : IStateManager
         {
             var property = injection.Property;
             var nestedViewModel = property.GetValue(viewModel) as ViewModel;
-            var nestedMap = viewModelFactory.GetInjectionMap(injection.ViewModelType);
+            var nestedMap = _viewModelFactory.GetInjectionMap(injection.ViewModelType);
 
             await InitializeStateAsync(nestedViewModel!, nestedMap);
         }

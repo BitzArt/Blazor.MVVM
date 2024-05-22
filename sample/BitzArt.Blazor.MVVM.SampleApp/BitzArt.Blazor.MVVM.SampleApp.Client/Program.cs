@@ -10,7 +10,6 @@ internal class Program
 
         builder.Services.AddRenderingEnvironment();
         builder.Services.AddBlazorMvvm().AddViewModels();
-        builder.Services.AddBlazorStateManager();
 
         await builder.Build().RunAsync();
     }
