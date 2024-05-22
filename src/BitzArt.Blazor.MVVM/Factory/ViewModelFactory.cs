@@ -21,12 +21,11 @@ internal class ViewModelFactory : IViewModelFactory
 
     public void AddViewModel(Type viewModelType, string registrationKey)
     {
-        if (!typeof(ViewModel).IsAssignableFrom(viewModelType)) throw new InvalidOperationException(
-            $"Type {viewModelType.Name} is not a ViewModel.");
+        if (!typeof(ViewModel).IsAssignableFrom(viewModelType)) 
+            throw new InvalidOperationException($"Type {viewModelType.Name} is not a ViewModel.");
 
         if (InjectionMaps.ContainsKey(viewModelType))
-            throw new InvalidOperationException(
-                               $"ViewModel {viewModelType.Name} is already registered in the factory.");
+            throw new InvalidOperationException($"ViewModel {viewModelType.Name} is already registered in the factory.");
 
         InjectionMaps.Add(viewModelType, new(viewModelType, registrationKey));
     }
