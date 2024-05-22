@@ -10,5 +10,5 @@ public class TestLayer1ViewModel : ViewModel<TestLayer1ViewModelState>
 
 public class TestLayer1ViewModelState
 {
-    public string SubTitle { get; set; } = "Sub Title";
+    public string? Subtitle { get; set; } = "Subtitle";
 }
