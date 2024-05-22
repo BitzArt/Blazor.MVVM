@@ -33,5 +33,5 @@ public class CounterViewModel : ViewModel<CounterState>
 
 public class CounterState
 {
-    public int? Count { get; set; };
+    public int? Count { get; set; }
 }
