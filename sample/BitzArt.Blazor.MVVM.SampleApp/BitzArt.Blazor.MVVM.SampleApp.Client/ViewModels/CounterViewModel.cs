@@ -2,9 +2,11 @@
 
 public class CounterViewModel : ViewModel<CounterState>
 {
+    private readonly Timer _timer;
+
     public CounterViewModel()
     {
-        _ = new Timer(TimerIncrementCount, null, 1000, 1000);
+        _timer = new Timer(TimerIncrementCount, null, 1000, 1000);
     }
 
     private void TimerIncrementCount(object? state)

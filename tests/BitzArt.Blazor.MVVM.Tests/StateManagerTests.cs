@@ -15,7 +15,7 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestLayer1ViewModel>();
+        var viewModel = serviceProvider.GetRequiredService<TestNestedStatefulViewModel>();
 
         // Act
         var state = stateManager.SerializeState(viewModel);
@@ -33,7 +33,7 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
+        var viewModel = serviceProvider.GetRequiredService<TestStatefulParentViewModel>();
 
         // Act
         var state = stateManager.SerializeState(viewModel);
@@ -51,7 +51,7 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestLayer2ViewModel>();
+        var viewModel = serviceProvider.GetRequiredService<TestNestedViewModel>();
 
         // Act
         var state = stateManager.SerializeState(viewModel);
@@ -69,7 +69,7 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestLayer1ViewModel>();
+        var viewModel = serviceProvider.GetRequiredService<TestNestedStatefulViewModel>();
 
         var viewModelTitle = nameof(TestLayer1ViewModel);
         viewModel.State.Title = viewModelTitle;
@@ -93,13 +93,13 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
-        var nestedViewModel = viewModel.TestLayer1ViewModel;
+        var viewModel = serviceProvider.GetRequiredService<TestStatefulParentViewModel>();
+        var nestedViewModel = viewModel.TestNestedStatefulViewModel;
 
-        var viewModelTitle = nameof(TestParentViewModel);
+        var viewModelTitle = nameof(TestStatefulParentViewModel);
         viewModel.State.Title = viewModelTitle;
 
-        var nestedViewModelTitle = nameof(TestLayer1ViewModel);
+        var nestedViewModelTitle = nameof(TestNestedStatefulViewModel);
         nestedViewModel.State.Title = nestedViewModelTitle;
 
         var state = stateManager.SerializeState(viewModel);
@@ -123,10 +123,10 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
+        var viewModel = serviceProvider.GetRequiredService<TestNestedStatefulViewModel>();
 
         var viewModelTitle = viewModel.State.Title;
-        viewModel.State.Title = nameof(TestParentViewModel);
+        viewModel.State.Title = nameof(TestNestedStatefulViewModel);
 
         // Act
         await stateManager.InitializeStateAsync(viewModel);
@@ -144,14 +144,14 @@ public class StateManagerTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
-        var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
-        var nestedViewModel = viewModel.TestLayer1ViewModel;
+        var viewModel = serviceProvider.GetRequiredService<TestStatefulParentViewModel>();
+        var nestedViewModel = viewModel.TestNestedStatefulViewModel;
 
         var viewModelTitle = viewModel.State.Title;
-        viewModel.State.Title = nameof(TestParentViewModel);
+        viewModel.State.Title = nameof(TestStatefulParentViewModel);
 
         var nestedViewModelTitle = nestedViewModel.State.Title;
-        nestedViewModel.State.Title = nameof(TestLayer1ViewModel);
+        nestedViewModel.State.Title = nameof(TestNestedStatefulViewModel);
 
         // Act
         await stateManager.InitializeStateAsync(viewModel);

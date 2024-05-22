@@ -26,6 +26,6 @@ internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
             throw new InvalidOperationException("IViewModelFactory is already registered in this ServiceCollection.");
 
         ServiceCollection.AddSingleton(Factory);
-        ServiceCollection.AddSingleton(new BlazorViewModelStateManager(Factory));
+        ServiceCollection.AddSingleton<BlazorViewModelStateManager>();
     }
 }

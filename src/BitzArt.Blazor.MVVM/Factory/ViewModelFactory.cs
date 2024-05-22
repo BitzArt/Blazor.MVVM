@@ -12,7 +12,7 @@ public interface IViewModelFactory
 
 internal class ViewModelFactory : IViewModelFactory
 {
-    public ICollection<ViewModelInjectionMap> InjectionMaps { get; set; }
+    public Dictionary<Type, ViewModelInjectionMap> InjectionMaps { get; set; }
 
     public ViewModelFactory()
     {
@@ -24,11 +24,11 @@ internal class ViewModelFactory : IViewModelFactory
         if (!typeof(ViewModel).IsAssignableFrom(viewModelType)) throw new InvalidOperationException(
             $"Type {viewModelType.Name} is not a ViewModel.");
 
-        if (InjectionMaps.Any(x => x.ViewModelType == viewModelType))
+        if (InjectionMaps.ContainsKey(viewModelType))
             throw new InvalidOperationException(
-                $"ViewModel {viewModelType.Name} is already registered in the factory.");
+                               $"ViewModel {viewModelType.Name} is already registered in the factory.");
 
-        InjectionMaps.Add(new(viewModelType, registrationKey));
+        InjectionMaps.Add(viewModelType, new(viewModelType, registrationKey));
     }
 
     public TViewModel Create<TViewModel>(IServiceProvider serviceProvider)
@@ -37,9 +37,8 @@ internal class ViewModelFactory : IViewModelFactory
 
     public ViewModel Create(IServiceProvider serviceProvider, Type viewModelType)
     {
-        var viewModelMap = InjectionMaps.FirstOrDefault(x => x.ViewModelType == viewModelType)
-            ?? throw new InvalidOperationException(
-                $"ViewModel {viewModelType.Name} is not registered in the factory.");
+        var viewModelMap = InjectionMaps.GetValueOrDefault(viewModelType)
+            ?? throw new InvalidOperationException($"ViewModel {viewModelType.Name} is not registered in the factory.");
 
         var viewModel = (ViewModel)serviceProvider.GetRequiredKeyedService(typeof(ViewModel), viewModelMap.RegistrationKey);
         foreach (var injection in viewModelMap.Injections)
@@ -53,7 +52,7 @@ internal class ViewModelFactory : IViewModelFactory
 
     public ViewModelInjectionMap GetInjectionMap(Type viewModelType)
     {
-        var injectionMap = InjectionMaps.FirstOrDefault(x => x.ViewModelType == viewModelType)
+        var injectionMap = InjectionMaps.GetValueOrDefault(viewModelType)
             ?? throw new InvalidOperationException($"ViewModel {viewModelType.Name} is not registered in the factory.");
 
         return injectionMap;

@@ -7,7 +7,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
 {
     private ViewModelFactory _viewModelFactory { get; } = (ViewModelFactory)viewModelFactory;
 
-    private const string _nestedStateKey = "__ns_";
+    private const string _nestedStatePrefix = "__ns_";
 
     /// <summary>
     /// Serializes states in <see cref="ViewModel"/>s hierarchy to JSON encoded as UTF-8 bytes.
@@ -39,7 +39,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
             var nestedState = GetState(nestedViewModel!, nestedMap);
 
             if (nestedState is not null)
-                state.Add($"{_nestedStateKey}{property.Name}", nestedState);
+                state.Add($"{_nestedStatePrefix}{property.Name}", nestedState);
         }
 
         return state.Values.Count != 0 ? state : null;
@@ -62,7 +62,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
         foreach (var injection in injectionMap.Injections)
         {
             var property = injection.Property;
-            var jsonKey = $"{_nestedStateKey}{property.Name}";
+            var jsonKey = $"{_nestedStatePrefix}{property.Name}";
             var nestedNode = node[jsonKey];
 
             if (nestedNode is null) continue;
@@ -72,7 +72,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
 
             await RestoreStateAsync(nestedViewModel!, nestedNode, nestedMap);
 
-            node.AsObject().Remove(jsonKey);
+            (node as JsonObject)!.Remove(jsonKey);
         }
 
         if (viewModel is not IStatefulViewModel statefulViewModel) return;
