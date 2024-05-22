@@ -73,7 +73,7 @@ public class ServiceRegistrationTests
 
         var parentInjectionMap = factory.GetInjectionMap(typeof(TestParentViewModel));
 
-        Assert.Single(parentInjectionMap.Injections);
+        Assert.Single(parentInjectionMap.Injections.Where(x => x.IsNestedViewModelInjection));
     }
 
     [Fact]

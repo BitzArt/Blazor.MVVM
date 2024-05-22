@@ -4,7 +4,7 @@ namespace BitzArt.Blazor.MVVM.Tests.ViewModels;
 
 public class TestNestedStatefulViewModel : ViewModel<TestNestedStatefulViewModelState>
 {
-    [Inject]
+    [NestViewModel]
     public TestNestedViewModel TestNestedViewModel { get; set; } = null!;
 }
 

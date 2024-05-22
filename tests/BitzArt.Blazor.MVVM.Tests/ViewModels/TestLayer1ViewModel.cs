@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace BitzArt.Blazor.MVVM.Tests.ViewModels;
+﻿namespace BitzArt.Blazor.MVVM.Tests.ViewModels;
 
 public class TestLayer1ViewModel : ViewModel
 {
-    [Inject]
+    [NestViewModel]
     public TestLayer2ViewModel TestLayer2ViewModel { get; set; } = null!;
 }

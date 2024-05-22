@@ -4,10 +4,10 @@ namespace BitzArt.Blazor.MVVM.Tests.ViewModels;
 
 public class TestParentWithDuplicateChildViewModel : ViewModel
 {
-    [Inject]
+    [NestViewModel]
     public TestDuplicateChildViewModel Child1 { get; set; } = null!;
 
-    [Inject]
+    [NestViewModel]
     public TestDuplicateChildViewModel Child2 { get; set; } = null!;
 }
 

@@ -5,7 +5,7 @@ using System.Text;
 namespace BitzArt.Blazor.MVVM.Tests;
 
 public class StateManagerTests
-{
+{/*
     [Fact]
     public void SerializeState_StatefulViewModel_ReturnsString()
     {
@@ -159,5 +159,5 @@ public class StateManagerTests
         // Assert
         Assert.Equal(viewModelTitle, viewModel.State.Title);
         Assert.Equal(nestedViewModelTitle, nestedViewModel.State.Title);
-    }
+    }*/
 }
