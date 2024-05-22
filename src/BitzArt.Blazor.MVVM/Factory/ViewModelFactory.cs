@@ -12,7 +12,7 @@ public interface IViewModelFactory
 
 internal class ViewModelFactory : IViewModelFactory
 {
-    public Dictionary<Type, ViewModelInjectionMap> InjectionMaps { get; set; }
+    private Dictionary<Type, ViewModelInjectionMap> InjectionMaps { get; set; }
 
     public ViewModelFactory()
     {

@@ -50,10 +50,9 @@ public class ServiceRegistrationTests
 
         var factory = (ViewModelFactory)serviceProvider.GetRequiredService<IViewModelFactory>();
 
-        Assert.NotEmpty(factory.InjectionMaps);
-        Assert.NotNull(factory.InjectionMaps[typeof(TestParentViewModel)]);
-        Assert.NotNull(factory.InjectionMaps[typeof(TestLayer1ViewModel)]);
-        Assert.NotNull(factory.InjectionMaps[typeof(TestLayer2ViewModel)]);
+        Assert.NotNull(factory.GetInjectionMap(typeof(TestParentViewModel)));
+        Assert.NotNull(factory.GetInjectionMap(typeof(TestLayer1ViewModel)));
+        Assert.NotNull(factory.GetInjectionMap(typeof(TestLayer2ViewModel)));
     }
 
     [Fact]
@@ -70,10 +69,9 @@ public class ServiceRegistrationTests
 
         var factory = (ViewModelFactory)serviceProvider.GetRequiredService<IViewModelFactory>();
 
-        Assert.NotEmpty(factory.InjectionMaps);
-        Assert.NotNull(factory.InjectionMaps[typeof(TestParentViewModel)]);
+        Assert.NotNull(factory.GetInjectionMap(typeof(TestParentViewModel)));
 
-        var parentInjectionMap = factory.InjectionMaps[typeof(TestParentViewModel)];
+        var parentInjectionMap = factory.GetInjectionMap(typeof(TestParentViewModel));
 
         Assert.Single(parentInjectionMap.Injections);
     }
