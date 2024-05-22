@@ -5,10 +5,14 @@ namespace BitzArt.Blazor.MVVM;
 
 public partial class ComponentStateContainer : ComponentBase
 {
-    [Parameter] public ViewModel ViewModel { get; set; } = null!;
-    [Parameter] public string StateElementKey { get; set; } = "state";
+    [Inject]
+    private BlazorViewModelStateManager StateManager { get; set; } = null!;
 
-    [Inject] private BlazorViewModelStateManager StateManager { get; set; } = null!;
+    [Parameter]
+    public ViewModel ViewModel { get; set; } = null!;
+
+    [Parameter]
+    public string StateElementKey { get; set; } = "state";
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

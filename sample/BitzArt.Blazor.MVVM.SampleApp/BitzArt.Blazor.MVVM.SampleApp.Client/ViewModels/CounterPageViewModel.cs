@@ -17,8 +17,11 @@ public class CounterPageViewModel(
         State.Text = $"ViewModel State initialized on: {renderingEnvironment}";
 
         OnStateRestored();
+    }
 
-        Counter2ViewModel.State!.Count += 100;
+    public override void OnStateRestored()
+    {
+        Counter2ViewModel.State!.Count = 100;
     }
 }
 

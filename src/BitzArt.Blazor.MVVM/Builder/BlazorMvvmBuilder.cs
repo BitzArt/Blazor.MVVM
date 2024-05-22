@@ -16,7 +16,7 @@ internal class BlazorMvvmBuilder : IBlazorMvvmBuilder
     public IViewModelFactory Factory { get; set; }
 
     public BlazorMvvmBuilder(
-        IServiceCollection serviceCollection, 
+        IServiceCollection serviceCollection,
         IViewModelFactory factory)
     {
         ServiceCollection = serviceCollection;

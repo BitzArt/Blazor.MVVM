@@ -71,8 +71,8 @@ public class StateManagerTests
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
         var viewModel = serviceProvider.GetRequiredService<TestLayer1ViewModel>();
 
-        var subtitle = nameof(TestLayer1ViewModel);
-        viewModel.State.Subtitle = subtitle;
+        var viewModelTitle = nameof(TestLayer1ViewModel);
+        viewModel.State.Title = viewModelTitle;
 
         var state = stateManager.SerializeState(viewModel);
         viewModel.State = new();
@@ -81,7 +81,7 @@ public class StateManagerTests
         await stateManager.RestoreStateAsync(viewModel, Encoding.UTF8.GetString(state!));
 
         // Assert
-        Assert.Equal(subtitle, viewModel.State.Subtitle);
+        Assert.Equal(viewModelTitle, viewModel.State.Title);
     }
 
     [Fact]
@@ -96,11 +96,11 @@ public class StateManagerTests
         var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
         var nestedViewModel = viewModel.TestLayer1ViewModel;
 
-        var title = nameof(TestParentViewModel);
-        viewModel.State.Title = title;
+        var viewModelTitle = nameof(TestParentViewModel);
+        viewModel.State.Title = viewModelTitle;
 
-        var subtitle = nameof(TestLayer1ViewModel);
-        nestedViewModel.State.Subtitle = subtitle;
+        var nestedViewModelTitle = nameof(TestLayer1ViewModel);
+        nestedViewModel.State.Title = nestedViewModelTitle;
 
         var state = stateManager.SerializeState(viewModel);
         viewModel.State = new();
@@ -110,8 +110,8 @@ public class StateManagerTests
         await stateManager.RestoreStateAsync(viewModel, Encoding.UTF8.GetString(state!));
 
         // Assert
-        Assert.Equal(title, viewModel.State.Title);
-        Assert.Equal(subtitle, nestedViewModel.State.Subtitle);
+        Assert.Equal(viewModelTitle, viewModel.State.Title);
+        Assert.Equal(nestedViewModelTitle, nestedViewModel.State.Title);
     }
 
     [Fact]
@@ -125,14 +125,14 @@ public class StateManagerTests
         var stateManager = serviceProvider.GetRequiredService<BlazorViewModelStateManager>();
         var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
 
-        var title = viewModel.State.Title;
+        var viewModelTitle = viewModel.State.Title;
         viewModel.State.Title = nameof(TestParentViewModel);
 
         // Act
         await stateManager.InitializeStateAsync(viewModel);
 
         // Assert
-        Assert.Equal(title, viewModel.State.Title);
+        Assert.Equal(viewModelTitle, viewModel.State.Title);
     }
 
     [Fact]
@@ -147,17 +147,17 @@ public class StateManagerTests
         var viewModel = serviceProvider.GetRequiredService<TestParentViewModel>();
         var nestedViewModel = viewModel.TestLayer1ViewModel;
 
-        var title = viewModel.State.Title;
+        var viewModelTitle = viewModel.State.Title;
         viewModel.State.Title = nameof(TestParentViewModel);
 
-        var subtitle = nestedViewModel.State.Subtitle;
-        nestedViewModel.State.Subtitle = nameof(TestLayer1ViewModel);
+        var nestedViewModelTitle = nestedViewModel.State.Title;
+        nestedViewModel.State.Title = nameof(TestLayer1ViewModel);
 
         // Act
         await stateManager.InitializeStateAsync(viewModel);
 
         // Assert
-        Assert.Equal(title, viewModel.State.Title);
-        Assert.Equal(subtitle, nestedViewModel.State.Subtitle);
+        Assert.Equal(viewModelTitle, viewModel.State.Title);
+        Assert.Equal(nestedViewModelTitle, nestedViewModel.State.Title);
     }
 }

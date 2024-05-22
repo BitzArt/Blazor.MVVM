@@ -10,14 +10,12 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
     private const string _nestedStateKey = "__ns_";
 
     /// <summary>
-    /// Serializes <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states 
-    /// to JSON encoded as UTF-8 bytes.
+    /// Serializes states in <see cref="ViewModel"/>s hierarchy to JSON encoded as UTF-8 bytes.
     /// </summary>
     public byte[]? SerializeState(ViewModel viewModel)
     {
         var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
         var state = GetState(viewModel, injectionMap);
-
         if (state is null) return null;
 
         return JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
@@ -48,12 +46,11 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
     }
 
     /// <summary>
-    /// Restores <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states from JSON string.
+    /// Restores states in <see cref="ViewModel"/>s hierarchy from JSON string.
     /// </summary>
     public async Task RestoreStateAsync(ViewModel viewModel, string json)
     {
         var node = JsonNode.Parse(json);
-
         if (node is null) return;
 
         var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
@@ -91,7 +88,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
     }
 
     /// <summary>
-    /// Initializes <see cref="ViewModel"/>'s and it's nested <see cref="ViewModel"/>s' states.
+    /// Initializes states in <see cref="ViewModel"/>s hierarchy.
     /// </summary>
     public async Task InitializeStateAsync(ViewModel viewModel)
     {
