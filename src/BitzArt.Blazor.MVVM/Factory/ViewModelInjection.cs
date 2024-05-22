@@ -2,7 +2,7 @@
 
 namespace BitzArt.Blazor.MVVM;
 
-public class ViewModelInjection
+internal class ViewModelInjection
 {
     public PropertyInfo Property { get; set; }
 
