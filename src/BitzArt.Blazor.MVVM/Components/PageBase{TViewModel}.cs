@@ -32,7 +32,7 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
         var buffer = Convert.FromBase64String(state!);
         var json = Encoding.UTF8.GetString(buffer);
 
-        var pageState = await StateManager.RestoreStateAsync(ViewModel, json);
+        var pageState = await ViewModelFactory.RestorePageComponentsStateAsync(ViewModel, json);
         PageStateDictionaryContainer.PageStateDictionary = pageState;
         PageStateDictionaryContainer.MarkConfigured();
 
@@ -52,6 +52,7 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
     public void Dispose()
     {
         PageStateDictionaryContainer.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 

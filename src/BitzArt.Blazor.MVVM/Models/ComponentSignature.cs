@@ -7,16 +7,11 @@ internal class RootComponentSignature : ComponentSignature
     public RootComponentSignature() : base(null) { }
 }
 
-internal class ComponentSignature
+internal class ComponentSignature(ComponentSignature? parent)
 {
     public virtual bool IsRoot() => false;
 
-    public virtual ComponentSignature? ParentSignature { get; set; }
-
-    public ComponentSignature(ComponentSignature? parent)
-    {
-        ParentSignature = parent;
-    }
+    public virtual ComponentSignature? ParentSignature { get; set; } = parent;
 
     public ComponentSignature NestNew()
     {

@@ -21,7 +21,7 @@ public class CounterViewModel(RenderingEnvironment renderingEnvironment)
 
     public override async Task InitializeStateAsync()
     {
-        await Task.Delay(1000);
+        await Task.Delay(3000);
         State.Text = $"Counter State initialized on: {renderingEnvironment}";
     }
 
@@ -30,10 +30,15 @@ public class CounterViewModel(RenderingEnvironment renderingEnvironment)
         if (this == Parent.Counter3) _timer = new Timer(IncrementCount, null, 1000, 1000);
     }
 
-    public void IncrementCount(object? state = null)
+    private void IncrementCount(object? state)
+    {
+        _ = IncrementCountAsync();
+    }
+
+    public async Task IncrementCountAsync()
     {
         State.Count++;
-        ComponentStateHasChanged();
+        await ComponentStateChangedAsync();
     }
 
     public void Dispose()

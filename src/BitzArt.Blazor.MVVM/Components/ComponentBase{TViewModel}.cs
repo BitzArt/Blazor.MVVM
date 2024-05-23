@@ -19,7 +19,7 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     internal PageStateDictionaryContainer PageStateDictionaryContainer { get; set; } = null!;
 
     [Inject]
-    private protected BlazorViewModelStateManager StateManager { get; set; } = null!;
+    private protected ViewModelFactory ViewModelFactory { get; set; } = null!;
 
     [Inject]
     protected RenderingEnvironment RenderingEnvironment { get; set; } = null!;
@@ -42,9 +42,9 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
         await base.OnInitializedAsync();
         await SetupStateAsync();
 
-        ViewModel.OnComponentStateChanged += (_) =>
+        ViewModel.OnComponentStateChanged += async (_) =>
         {
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         };
         await InvokeAsync(StateHasChanged);
     }
@@ -66,7 +66,11 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     {
         if (ViewModel is not IStatefulViewModel statefulViewModel) return;
 
-        await StateManager.InitializeStateAsync(ViewModel);
+        statefulViewModel.InitializeState();
+        await statefulViewModel.InitializeStateAsync();
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
 
         statefulViewModel.State.IsInitialized = true;
 
@@ -75,7 +79,9 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
             await statefulViewModel.OnStateInitializedAsync!.Invoke(ViewModel);
 
         StateHasChanged();
-        ViewModel.ComponentStateContainer?.NotifyStateChanged();
+
+        if (ViewModel.ComponentStateContainer is not null)
+            await ViewModel.ComponentStateContainer.NotifyStateChangedAsync();
     }
 
     protected virtual async Task RestoreStateAsync()

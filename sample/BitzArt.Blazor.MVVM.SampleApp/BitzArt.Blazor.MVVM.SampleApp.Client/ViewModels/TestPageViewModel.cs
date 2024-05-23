@@ -6,9 +6,8 @@ public class TestPageViewModel : ViewModel<TestPageState>
     {
         OnStateInitializedAsync += async (_) =>
         {
-            await Task.Delay(2000);
             State.Text = "Test Page State initialized";
-            ComponentStateHasChanged();
+            await ComponentStateChangedAsync();
         };
     }
 }

@@ -45,10 +45,13 @@ internal class ViewModelFactory : IViewModelFactory
 
         var viewModel = (ViewModel)serviceProvider.GetRequiredKeyedService(typeof(ViewModel), viewModelMap.RegistrationKey);
         viewModel.Signature = signature;
+        if (viewModel is IStatefulViewModel statefulViewModel)
+            statefulViewModel.State = (ComponentState)Activator.CreateInstance(statefulViewModel.StateType)!;
 
-        viewModel.OnComponentStateChanged += (sender) =>
+        viewModel.OnComponentStateChanged += async (sender) =>
         {
-            viewModel.ComponentStateContainer?.NotifyStateChanged();
+            if (viewModel.ComponentStateContainer is not null)
+                await viewModel.ComponentStateContainer!.NotifyStateChangedAsync();
         };
 
         foreach (var injection in viewModelMap.Injections)
@@ -65,9 +68,12 @@ internal class ViewModelFactory : IViewModelFactory
                 var injectedViewModel = Create(serviceProvider, injection.DependencyType, nestedSignature, parent: viewModel, affectedViewModels: affectedViewModels);
                 injection.Property.SetValue(viewModel, injectedViewModel);
 
-                viewModel.OnComponentStateContainerWasSet += (container) =>
+                viewModel.OnComponentStateContainerWasSet += async (container) =>
                 {
                     injectedViewModel.ComponentStateContainer = container;
+
+                    if (injectedViewModel.OnComponentStateContainerWasSet is not null)
+                        await injectedViewModel.OnComponentStateContainerWasSet.Invoke(container);
                 };
             }
             

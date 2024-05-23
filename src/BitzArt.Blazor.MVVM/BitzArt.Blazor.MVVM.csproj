@@ -31,4 +31,8 @@
 	  <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.*" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Using Include="BitzArt.Blazor.MVVM.Constants" Static="true" />
+	</ItemGroup>
+
 </Project>

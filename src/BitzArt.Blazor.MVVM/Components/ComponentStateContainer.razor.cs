@@ -6,10 +6,10 @@ namespace BitzArt.Blazor.MVVM;
 public partial class ComponentStateContainer : ComponentBase
 {
     [Inject]
-    private BlazorViewModelStateManager StateManager { get; set; } = null!;
+    private RenderingEnvironment RenderingEnvironment { get; set; } = null!;
 
     [Inject]
-    private RenderingEnvironment RenderingEnvironment { get; set; } = null!;
+    private ViewModelFactory ViewModelFactory { get; set; } = null!;
 
     [Parameter]
     public ViewModel ViewModel { get; set; } = null!;
@@ -17,10 +17,13 @@ public partial class ComponentStateContainer : ComponentBase
     [Parameter]
     public string StateElementKey { get; set; } = "state";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         ViewModel.ComponentStateContainer = this;
+
+        if (ViewModel.OnComponentStateContainerWasSet is not null)
+            await ViewModel.OnComponentStateContainerWasSet!.Invoke(this);
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -34,7 +37,7 @@ public partial class ComponentStateContainer : ComponentBase
     {
         if (!RenderingEnvironment.IsPrerender) return null;
 
-        var json = StateManager.SerializeState(ViewModel);
+        var json = ViewModelFactory.SerializePageState(ViewModel);
         if (json is null) return null;
 
         var stateEncoded = Convert.ToBase64String(json);
@@ -42,8 +45,8 @@ public partial class ComponentStateContainer : ComponentBase
         return $"<script id=\"{StateElementKey}\" type=\"text/template\">{stateEncoded}</script>";
     }
 
-    public void NotifyStateChanged()
+    public async Task NotifyStateChangedAsync()
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 }
