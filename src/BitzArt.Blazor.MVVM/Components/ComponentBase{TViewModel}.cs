@@ -73,6 +73,7 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
         statefulViewModel.OnStateInitializedAsync?.Invoke(ViewModel);
 
         StateHasChanged();
+        ViewModel.ComponentStateContainer?.NotifyStateChanged();
     }
 
     protected virtual async Task RestoreStateAsync()

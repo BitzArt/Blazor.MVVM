@@ -17,6 +17,12 @@ public partial class ComponentStateContainer : ComponentBase
     [Parameter]
     public string StateElementKey { get; set; } = "state";
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ViewModel.ComponentStateContainer = this;
+    }
+
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         var stateElement = BuildStateElement();
@@ -34,5 +40,10 @@ public partial class ComponentStateContainer : ComponentBase
         var stateEncoded = Convert.ToBase64String(json);
 
         return $"<script id=\"{StateElementKey}\" type=\"text/template\">{stateEncoded}</script>";
+    }
+
+    public void NotifyStateChanged()
+    {
+        StateHasChanged();
     }
 }

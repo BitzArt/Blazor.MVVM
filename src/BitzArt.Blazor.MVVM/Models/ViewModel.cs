@@ -15,6 +15,20 @@ public abstract class ViewModel
 
     internal ComponentSignature Signature { get; set; } = null!;
 
+    private ComponentStateContainer? _componentStateContainer;
+    internal ComponentStateContainer? ComponentStateContainer
+    {
+        get => _componentStateContainer;
+        set
+        {
+            _componentStateContainer = value;
+            OnComponentStateContainerWasSet?.Invoke(value!);
+        }
+    }
+
+    internal delegate void ComponentStateContainerWasSetHandler(ComponentStateContainer sender);
+    internal ComponentStateContainerWasSetHandler? OnComponentStateContainerWasSet { get; set; }
+
     protected TViewModel CreateNestedViewModel<TViewModel>()
         where TViewModel : ViewModel
     {

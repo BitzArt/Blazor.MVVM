@@ -59,6 +59,9 @@ internal class ViewModelFactory : IViewModelFactory
                 var nestedSignature = new ComponentSignature(parent: signature);
                 var injectedViewModel = Create(serviceProvider, injection.DependencyType, nestedSignature, parent: viewModel, affectedViewModels: affectedViewModels);
                 injection.Property.SetValue(viewModel, injectedViewModel);
+
+                viewModel.OnComponentStateContainerWasSet += (container)
+                    => injectedViewModel.ComponentStateContainer = container;
             }
             
             else if (injection.IsParentViewModelInjection)
