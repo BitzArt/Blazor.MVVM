@@ -46,6 +46,12 @@ internal class ViewModelFactory : IViewModelFactory
         var viewModel = (ViewModel)serviceProvider.GetRequiredKeyedService(typeof(ViewModel), viewModelMap.RegistrationKey);
         viewModel.Signature = signature;
 
+        viewModel.OnComponentStateChanged += (sender) =>
+        {
+            viewModel.ComponentStateContainer?.NotifyStateChanged();
+            return Task.CompletedTask;
+        };
+
         foreach (var injection in viewModelMap.Injections)
         {
             if (injection.IsServiceInjection)
@@ -60,8 +66,10 @@ internal class ViewModelFactory : IViewModelFactory
                 var injectedViewModel = Create(serviceProvider, injection.DependencyType, nestedSignature, parent: viewModel, affectedViewModels: affectedViewModels);
                 injection.Property.SetValue(viewModel, injectedViewModel);
 
-                viewModel.OnComponentStateContainerWasSet += (container)
-                    => injectedViewModel.ComponentStateContainer = container;
+                viewModel.OnComponentStateContainerWasSet += (container) =>
+                {
+                    injectedViewModel.ComponentStateContainer = container;
+                };
             }
             
             else if (injection.IsParentViewModelInjection)
