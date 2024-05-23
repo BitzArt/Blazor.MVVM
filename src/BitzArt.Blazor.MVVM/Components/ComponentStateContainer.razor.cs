@@ -44,6 +44,6 @@ public partial class ComponentStateContainer : ComponentBase
 
     public void NotifyStateChanged()
     {
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 }
