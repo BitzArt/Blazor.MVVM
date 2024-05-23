@@ -99,6 +99,9 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
         statefulViewModel.State = state;
         statefulViewModel.State.IsInitialized = true;
 
+        statefulViewModel.OnStateRestored();
+        await statefulViewModel.OnStateRestoredAsync();
+
         statefulViewModel.OnStateChanged();
         await statefulViewModel.OnStateChangedAsync();
     }

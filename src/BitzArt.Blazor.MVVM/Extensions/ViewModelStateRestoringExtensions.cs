@@ -39,11 +39,5 @@ internal static class ViewModelStateRestoringExtensions
 
         var state = JsonSerializer.Deserialize(node, statefulViewModel.StateType, StateJsonOptionsProvider.Options);
         pageStateDictionary.Add(viewModel.Signature, state as ComponentState);
-
-        statefulViewModel.OnStateRestored();
-        await statefulViewModel.OnStateRestoredAsync();
-
-        statefulViewModel.OnStateChanged();
-        await statefulViewModel.OnStateChangedAsync();
     }
 }
