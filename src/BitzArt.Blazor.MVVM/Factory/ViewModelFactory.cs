@@ -49,7 +49,6 @@ internal class ViewModelFactory : IViewModelFactory
         viewModel.OnComponentStateChanged += (sender) =>
         {
             viewModel.ComponentStateContainer?.NotifyStateChanged();
-            return Task.CompletedTask;
         };
 
         foreach (var injection in viewModelMap.Injections)

@@ -1,0 +1,9 @@
+﻿@page "/test"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: true))
+@inherits PageBase<TestPageViewModel>
+
+<h3>TestPage</h3>
+
+<p>@ViewModel.State?.Text</p>
+
+<ComponentStateContainer ViewModel="ViewModel" />

@@ -24,6 +24,11 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
     protected override async Task RestoreStateAsync()
     {
         var state = await Js.InvokeAsync<string?>("getInnerText", [StateKey]);
+        if (state is null)
+        {
+            PageStateDictionaryContainer.MarkConfigured();
+            return;
+        }
         var buffer = Convert.FromBase64String(state!);
         var json = Encoding.UTF8.GetString(buffer);
 

@@ -36,7 +36,7 @@ public abstract class ViewModel
         return ViewModelFactory.Create<TViewModel>(ServiceProvider, nestedSignature);
     }
 
-    public delegate Task ComponentStateHasChangedHandler(object sender);
+    public delegate void ComponentStateHasChangedHandler(object sender);
     public ComponentStateHasChangedHandler? OnComponentStateChanged { get; set; }
 
     /// <summary>

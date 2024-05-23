@@ -18,7 +18,7 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
     {
         var injectionMap = _viewModelFactory.GetInjectionMap(viewModel.GetType());
         var state = GetState(viewModel, injectionMap);
-        if (state is null) return null;
+        state ??= [];
 
         return JsonSerializer.SerializeToUtf8Bytes(state, StateJsonOptionsProvider.Options);
     }
@@ -31,14 +31,6 @@ internal class BlazorViewModelStateManager(IViewModelFactory viewModelFactory)
         {
             var nodeJson = (JsonObject)JsonSerializer.SerializeToNode(statefulViewModel.State, statefulViewModel.State.GetType(), StateJsonOptionsProvider.Options)!;
             foreach (var node in nodeJson) state.Add(node.Key, node.Value);
-
-            //var nodeState = JsonSerializer.Deserialize<IDictionary<string, object>>(json, StateJsonOptionsProvider.Options)!;
-            //foreach (var item in nodeState) state.Add(item.Key, item.Value);
-
-            /*foreach (var property in statefulViewModel.StateType.GetProperties())
-            {
-                state.Add(property.Name, property.GetValue(statefulViewModel.State));
-            }*/
         }
 
         foreach (var injection in injectionMap.Injections.Where(x => x.IsNestedViewModelInjection))

@@ -40,12 +40,13 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        ViewModel.OnComponentStateChanged += async (_) =>
-        {
-            await InvokeAsync(StateHasChanged);
-        };
-
         await SetupStateAsync();
+
+        ViewModel.OnComponentStateChanged += (_) =>
+        {
+            InvokeAsync(StateHasChanged);
+        };
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task SetupStateAsync()
@@ -70,7 +71,8 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
         statefulViewModel.State.IsInitialized = true;
 
         statefulViewModel.OnStateInitialized?.Invoke(ViewModel);
-        statefulViewModel.OnStateInitializedAsync?.Invoke(ViewModel);
+        if (statefulViewModel.OnStateInitializedAsync is not null)
+            await statefulViewModel.OnStateInitializedAsync!.Invoke(ViewModel);
 
         StateHasChanged();
         ViewModel.ComponentStateContainer?.NotifyStateChanged();
