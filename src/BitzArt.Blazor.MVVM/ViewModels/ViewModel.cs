@@ -15,9 +15,6 @@ public abstract class ViewModel
     [Inject]
     private protected IServiceProvider ServiceProvider { get; set; } = null!;
 
-    [Inject]
-    protected RenderingEnvironment RenderingEnvironment { get; set; } = null!;
-
     // =====================   MVVM INTERNAL WIRING   =====================
 
     internal ComponentSignature Signature { get; set; } = null!;
