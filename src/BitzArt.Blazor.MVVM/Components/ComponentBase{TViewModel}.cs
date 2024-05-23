@@ -98,6 +98,9 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
         if (state!.GetType() != statefulViewModel.StateType) throw new InvalidOperationException("State type mismatch.");
         statefulViewModel.State = state;
         statefulViewModel.State.IsInitialized = true;
+
+        statefulViewModel.OnStateChanged();
+        await statefulViewModel.OnStateChangedAsync();
     }
 
     void IStateComponent.StateHasChanged() => InvokeAsync(StateHasChanged);
