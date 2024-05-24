@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Reflection;
 
 namespace BitzArt.Blazor.MVVM;
 
@@ -30,6 +31,20 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
 
+    private readonly FieldInfo _hasPendingQueuedRenderField;
+
+    protected ComponentBase()
+    {
+        _hasPendingQueuedRenderField = typeof(ComponentBase)
+            .GetField("_hasPendingQueuedRender", BindingFlags.Instance | BindingFlags.NonPublic)!;
+    }
+
+    protected override void OnInitialized()
+    {
+        _hasPendingQueuedRenderField.SetValue(this, true);
+        base.OnInitialized();
+    }
+
     /// <summary>
     /// Method invoked when the component is ready to start, having received its initial
     /// parameters from its parent in the render tree. Override this method if you will
@@ -47,6 +62,8 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
             await InvokeAsync(StateHasChanged);
         };
         await InvokeAsync(StateHasChanged);
+
+        _hasPendingQueuedRenderField.SetValue(this, false);
     }
 
     private async Task SetupStateAsync()

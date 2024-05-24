@@ -1,14 +1,20 @@
-﻿namespace BitzArt.Blazor.MVVM.SampleApp;
+﻿
+namespace BitzArt.Blazor.MVVM.SampleApp;
 
 public class TestPageViewModel : ViewModel<TestPageState>
 {
-    protected override void OnDependenciesInjected()
+    public override async Task InitializeStateAsync()
     {
-        OnStateInitializedAsync += async (_) =>
-        {
-            State.Text = "Test Page State initialized";
-            await ComponentStateChangedAsync();
-        };
+        State.Text = "Test Page State was initialized";
+        await ComponentStateChangedAsync();
+    }
+
+    public override async Task OnStateRestoredAsync()
+    {
+        await Task.Delay(3000);
+
+        State.Text = "Test Page State was restored";
+        await ComponentStateChangedAsync();
     }
 }
 
