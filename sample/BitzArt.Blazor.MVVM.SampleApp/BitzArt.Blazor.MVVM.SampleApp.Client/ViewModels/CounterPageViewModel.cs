@@ -1,7 +1,7 @@
 ﻿namespace BitzArt.Blazor.MVVM.SampleApp;
 
 public class CounterPageViewModel(RenderingEnvironment renderingEnvironment)
-    : ViewModel<CounterPageViewModelState>
+    : ViewModel<CounterPageState>
 {
     [NestViewModel]
     public CounterViewModel Counter1 { get; set; } = null!;
@@ -26,7 +26,7 @@ public class CounterPageViewModel(RenderingEnvironment renderingEnvironment)
     }
 }
 
-public class CounterPageViewModelState : ComponentState
+public class CounterPageState : ComponentState
 {
     public string Text { get; set; } = "Page State not initialized";
 }
