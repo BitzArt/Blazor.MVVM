@@ -54,4 +54,53 @@ public abstract class ViewModel
     /// Called when ViewModel hierarchy is built and all dependencies are injected.
     /// </summary>
     protected internal virtual void OnDependenciesInjected() { }
+
+    // =======================    EXCEPTION HANDLING    ========================
+
+    /// <summary>
+    /// Called when an exception is thrown and needs to be handled.
+    /// </summary>
+    public ViewModelExceptionHandler? ExceptionHandler { get; set; }
+
+    /// <summary>
+    /// Invokes <see cref="ExceptionHandler"/>
+    /// </summary>
+    public async Task HandleAsync(Exception ex)
+    {
+        if (ExceptionHandler is not null)
+            await ExceptionHandler.Invoke(this, ex);
+    }
+
+    /// <summary>
+    /// Notifies subscribed exception handlers in case of an exception
+    /// </summary>
+    public async Task HandleAsync(Func<Task> action)
+    {
+        try
+        {
+            await action.Invoke();
+        }
+        catch (Exception ex)
+        {
+            await HandleAsync(ex);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Notifies subscribed exception handlers in case of an exception
+    /// </summary>
+    /// <returns>Result of the action.</returns>
+    public async Task<TResult> HandleAsync<TResult>(Func<Task<TResult>> action)
+    {
+        try
+        {
+            return await action.Invoke();
+        }
+        catch (Exception ex)
+        {
+            await HandleAsync(ex);
+            throw;
+        }
+    }
 }
