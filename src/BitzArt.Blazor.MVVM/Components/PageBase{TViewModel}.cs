@@ -21,6 +21,25 @@ public abstract class PageBase<TViewModel> : ComponentBase<TViewModel>, IStateCo
 
     private const string StateKey = "state";
 
+    public delegate Task PageExceptionHandler(object sender, Exception ex);
+
+    /// <summary>
+    /// Called when an exception is thrown within the scope of the page and needs to be handled.
+    /// </summary>
+    public PageExceptionHandler? ExceptionHandler { get; set; }
+
+    override protected void OnInitialized()
+    {
+        base.OnInitialized();
+        ViewModel.ExceptionHandler += (sender, ex) =>
+        {
+            if (ExceptionHandler is null)
+                return Task.CompletedTask;
+            
+            return ExceptionHandler.Invoke(sender, ex);
+        };
+    }
+
     protected override async Task RestoreStateAsync()
     {
         var state = await Js.InvokeAsync<string?>("getInnerText", [StateKey]);

@@ -75,6 +75,14 @@ internal class ViewModelFactory : IViewModelFactory
                     if (injectedViewModel.OnComponentStateContainerWasSet is not null)
                         await injectedViewModel.OnComponentStateContainerWasSet.Invoke(container);
                 };
+
+                injectedViewModel.ExceptionHandler += async (sender, exception) =>
+                {
+                    if (viewModel.ExceptionHandler is null)
+                        return;
+
+                    await viewModel.ExceptionHandler.Invoke(sender, exception);
+                };
             }
             
             else if (injection.IsParentViewModelInjection)
