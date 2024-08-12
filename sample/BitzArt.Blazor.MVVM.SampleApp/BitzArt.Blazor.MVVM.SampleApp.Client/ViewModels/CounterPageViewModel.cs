@@ -19,7 +19,7 @@ public class CounterPageViewModel(RenderingEnvironment renderingEnvironment)
 
     protected override void OnDependenciesInjected()
     {
-        Counter2.OnStateInitialized += (_) =>
+        Counter2.State.OnInitialized += (_) =>
         {
             Counter2.State!.Count += 100;
         };

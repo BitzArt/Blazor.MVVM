@@ -55,6 +55,7 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        await ViewModel.WaitForRequirementsAsync();
         await SetupStateAsync();
 
         ViewModel.OnComponentStateChanged += async (_) =>
@@ -91,9 +92,12 @@ public abstract class ComponentBase<TViewModel> : ComponentBase, IStateComponent
 
         statefulViewModel.State.IsInitialized = true;
 
-        statefulViewModel.OnStateInitialized?.Invoke(ViewModel);
-        if (statefulViewModel.OnStateInitializedAsync is not null)
-            await statefulViewModel.OnStateInitializedAsync!.Invoke(ViewModel);
+        var stateInitializedEventArgs = new StateInitializedEventArgs(ViewModel, statefulViewModel.State, this);
+
+        statefulViewModel.State.OnInitialized?.Invoke(stateInitializedEventArgs);
+
+        if (statefulViewModel.State.OnInitializedAsync is not null)
+            await statefulViewModel.State.OnInitializedAsync!.Invoke(stateInitializedEventArgs);
 
         StateHasChanged();
 

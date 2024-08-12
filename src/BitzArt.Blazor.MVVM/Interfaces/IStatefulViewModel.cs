@@ -13,7 +13,4 @@ internal interface IStatefulViewModel
 
     public void OnStateChanged();
     public Task OnStateChangedAsync();
-
-    public StateInitializedHandler? OnStateInitialized { get; set; }
-    public StateInitializedAsyncHandler? OnStateInitializedAsync { get; set; }
 }

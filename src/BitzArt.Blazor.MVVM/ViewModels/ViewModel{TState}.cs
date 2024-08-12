@@ -19,7 +19,7 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     public TState State
     {
         get => _state;
-        set => _state = value;
+        internal set => _state = value;
     }
 
     // =====================   IStatefulViewModel    =====================
@@ -66,16 +66,4 @@ public abstract class ViewModel<TState> : ViewModel, IStatefulViewModel
     /// Called when the state has changed.
     /// </summary>
     public virtual Task OnStateChangedAsync() => Task.CompletedTask;
-
-    // ========================   SUBSCRIBTIONS   ========================
-
-    /// <summary>
-    /// Called when the state is initialized.
-    /// </summary>
-    public StateInitializedHandler? OnStateInitialized { get; set; }
-
-    /// <summary>
-    /// Called when the state is initialized.
-    /// </summary>
-    public StateInitializedAsyncHandler? OnStateInitializedAsync { get; set; }
 }

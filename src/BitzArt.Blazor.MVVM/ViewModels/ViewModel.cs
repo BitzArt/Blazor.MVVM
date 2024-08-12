@@ -72,7 +72,7 @@ public abstract class ViewModel
     }
 
     /// <summary>
-    /// Notifies subscribed exception handlers in case of an exception
+    /// Notifies subscribed exception handlers in case of an exception.
     /// </summary>
     public async Task HandleAsync(Func<Task> action)
     {
@@ -88,7 +88,7 @@ public abstract class ViewModel
     }
 
     /// <summary>
-    /// Notifies subscribed exception handlers in case of an exception
+    /// Notifies subscribed exception handlers in case of an exception.
     /// </summary>
     /// <returns>Result of the action.</returns>
     public async Task<TResult> HandleAsync<TResult>(Func<Task<TResult>> action)
@@ -103,4 +103,40 @@ public abstract class ViewModel
             throw;
         }
     }
+
+    // =======================  REQUIREMENTS  ========================
+
+    private readonly ViewModelRequirementCollection _requirements = new();
+
+    /// <summary>
+    /// Requires the specified condition to be met before this ViewModel can be used.
+    /// </summary>
+    /// <param name="condition">The condition to be met.</param>
+    /// <param name="cancellationToken">Wait for condition cancellation token</param>
+    public void Requires(Func<bool> condition, CancellationToken? cancellationToken = null)
+        => _requirements.Add(condition, cancellationToken);
+
+    /// <summary>
+    /// Requires the specified ComponentState to be initialized
+    /// before this ViewModel can be used.
+    /// </summary>
+    /// <param name="state">The ComponentState which should be initialized.</param>
+    public void Requires(ComponentState state)
+    {
+        var cts = new CancellationTokenSource();
+        state.OnInitializedAsync += (_)
+            =>
+        {
+            cts.Cancel();
+            return Task.CompletedTask;
+        };
+
+        Requires(() => state.IsInitialized, cts.Token);
+    }
+
+    /// <summary>
+    /// Waits for all ViewModel requirements to be met.
+    /// </summary>
+    public async Task WaitForRequirementsAsync()
+        => await _requirements.WaitAsync();
 }

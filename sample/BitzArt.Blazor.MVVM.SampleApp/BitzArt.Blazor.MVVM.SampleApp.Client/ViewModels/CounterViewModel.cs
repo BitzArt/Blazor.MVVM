@@ -21,7 +21,7 @@ public class CounterViewModel(RenderingEnvironment renderingEnvironment)
 
     public override async Task InitializeStateAsync()
     {
-        await Task.Delay(3000);
+        await Task.Delay(100);
         State.Text = $"Counter State initialized on: {renderingEnvironment}";
     }
 

@@ -29,16 +29,10 @@ internal class PageStateDictionaryContainer : IDisposable
     {
         if (Configured) return;
 
-        var waitHandle = new AutoResetEvent(false);
-        var cts = new CancellationTokenSource();
-
+        using var cts = new CancellationTokenSource();
         waitingUntilConfigured.Add(cts);
-        cts.Token.Register(() =>
-        {
-            waitHandle.Set();
-        });
 
-        await Task.Run(cts.Token.WaitHandle.WaitOne);
+        await Task.Delay(-1, cts.Token);
     }
 }
 
